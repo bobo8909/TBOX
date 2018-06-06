@@ -13,6 +13,8 @@ int main(void)
     	
 		Led_task();
 		
+		UartSendData_task();		
+
 		/*处理接收到的CAN数据*/
 		CANrecv_task();
 

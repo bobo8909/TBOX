@@ -11,7 +11,11 @@ typedef struct
 }CANRXBUF;
 
 
-
+typedef struct 
+{
+	u8 Buf[20];
+	u8 NewDataFlag;
+}CANRXRAWDATA;
 
 
 typedef struct _VCU_2
@@ -228,6 +232,9 @@ extern STRUCT_EBS_1 g_EBS1RecvVal;
 extern CANRXBUF CANRecvEBSBuf ;
 extern CANRXBUF CANRecvDataBuf[3] ;
 
+#define RXMSG_LEN 20
+extern CanRxMsg RxMessage;
+extern CANRXRAWDATA gCanRxRawDataBuf[RXMSG_LEN];
 
 
 #define CANID_VCU_2 			(0x18F122D1) //¶¯Á¦Ä£¿é

@@ -59,7 +59,7 @@ void TIM6_IRQHandler(void)	 //TIM2ÖÐ¶Ï
 			if(CANSendCount == 99)
 			{
 				g_TIMFlag.bits.CANFlag = 1;
-				g_TIMFlag.bits.EncoderFlag = 1;
+				g_TIMFlag.bits.ATUartSendFlag = 1;
 				CANSendCount = 0;
 			}
 		}

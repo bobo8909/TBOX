@@ -597,6 +597,7 @@ void USART_SendData(USART_TypeDef* USARTx, uint16_t Data)
     
   /* Transmit Data */
   USARTx->DR = (Data & (uint16_t)0x01FF);
+  while(USART_GetFlagStatus(USARTx, USART_FLAG_TXE) == RESET){} //等待发送缓冲区空才能发送下一个字符
 }
 
 /**

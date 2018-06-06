@@ -121,38 +121,24 @@ u8 CanModeInit(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 }   
  
 #if CAN_RX0_INT_ENABLE	//使能RX0中断
+
+CanRxMsg RxMessage;
+CANRXRAWDATA gCanRxRawDataBuf[RXMSG_LEN]={0};
+static u8 RxMsgCount = 0;
 //中断服务函数			    
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
-  	CanRxMsg RxMessage;
-	
   	CAN_Receive(CAN1, 0, &RxMessage);
 	
 	if(RxMessage.ExtId == CANID_VCU_2)
 	{
-		memcpy(CANRecvDataBuf[0].Buf,RxMessage.Data,RxMessage.DLC);
-		
-		CANRecvDataBuf[0].NewDataFlag = 1;
-	}
-	if(RxMessage.ExtId == CANID_VCU_3)
-	{
-		memcpy(CANRecvDataBuf[1].Buf,RxMessage.Data,RxMessage.DLC);
-		
-		CANRecvDataBuf[1].NewDataFlag = 1;
-	}
-	
-	if(RxMessage.ExtId == CANID_VCU_5)
-	{
-		memcpy(CANRecvDataBuf[2].Buf,RxMessage.Data,RxMessage.DLC);
-		
-		CANRecvDataBuf[2].NewDataFlag = 1;
-	}
-
-	if(RxMessage.ExtId == CANID_EBS_1)
-	{
-		memcpy(CANRecvEBSBuf.Buf,RxMessage.Data,RxMessage.DLC);
-		
-		CANRecvEBSBuf.NewDataFlag = 1;
+		memcpy(gCanRxRawDataBuf[RxMsgCount].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[RxMsgCount].NewDataFlag = 1;
+		RxMsgCount++;
+		if(RxMsgCount == RXMSG_LEN)
+		{
+			RxMsgCount = 0;
+		}
 	}
 }
 #endif
