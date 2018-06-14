@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\KEY;..\HARDWARE\TIMER;..\HARDWARE\CAN;..\APP;..\HARDWARE\Speed;..\HARDWARE\Driver_IO;..\HARDWARE\SPI;..\HARDWARE\AD5734R;..\HARDWARE\IWDG;..\HARDWARE\ADC;..\HARDWARE\DAC;..\HARDWARE\EXTI</IncludePath>
+              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\KEY;..\HARDWARE\TIMER;..\HARDWARE\CAN;..\APP;..\HARDWARE\Speed;..\HARDWARE\Driver_IO;..\HARDWARE\SPI;..\HARDWARE\AD5734R;..\HARDWARE\IWDG;..\HARDWARE\ADC;..\HARDWARE\DAC;..\HARDWARE\EXTI;..\HARDWARE\N720_Driver</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -482,6 +482,11 @@
               <FileName>exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\EXTI\exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>N720_Driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\N720_Driver\N720_Driver.c</FilePath>
             </File>
           </Files>
         </Group>

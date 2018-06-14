@@ -29,6 +29,6 @@ void CANsend_task(void)
 	
 	}
 
-	CANErrPrintf();
+	//CANErrPrintf();
 }
 

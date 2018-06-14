@@ -33,6 +33,26 @@ typedef union
 }STRUCT_TIMFLAG;
 extern STRUCT_TIMFLAG g_TIMFlag;
 
+typedef union
+{
+	u16 Byte;
+	struct 
+	{
+		u8 bN720StartInitFlag : 1;
+		u8 bN720SendATCommandFlag : 1;
+		u8 bN720SendATICommandFlag : 1;
+		u8 bN720SendATCCIDCommandFlag : 1;
+		u8 bN720SendATCPINCommandFlag : 1;
+		u8 bN720SendATCSQCommandFlag : 1;
+		u8 bN720SendATCREGCommandFlag : 1;
+		u8 bN720SendATCGATTCommandFlag : 1;
+		u8 bN720SendATMYSYSINFOCommandFlag : 1;
+		u8 b9 : 1;
+		u8 bnull : 6;
+	}bits;
+}STRUCT_N720InitTIMFlag;
+extern STRUCT_N720InitTIMFlag g_N720InitTIMFlag;
+
 extern u16 AngSensorAMinus;
 extern u16 AngSensorBMinus;
 
@@ -40,6 +60,19 @@ extern int PWM3OUT2;
 extern int PWM3OUT4; 
 extern int PWM4OUT2; 				
 extern int PWM2OUT4; 
+
+#define N720StartSend 0x00
+#define N720SendAT 0x01
+#define N720SendATI 0x02
+#define N720SendATCCID 0x03
+#define N720SendATCPIN 0x04
+#define N720SendATCSQ 0x05
+#define N720SendATCREG 0x06
+#define N720SendATCGA 0x07
+#define N720SendATMYSYSINFO 0x08
+#define N720InitFinish 0xFE
+extern u8 gN720InitStep;
+
 //extern u8 g_TIM2PluseCount;
 //extern u8 g_CANSpeedFlag;
 void TIM_INIT(void);

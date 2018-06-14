@@ -1,7 +1,10 @@
 #include "timer.h"
 
+#define DELAY10S 10000
+#define DELAY1S 1000
 /*global value*/
-STRUCT_TIMFLAG g_TIMFlag;
+STRUCT_TIMFLAG g_TIMFlag = {0};
+STRUCT_N720InitTIMFlag g_N720InitTIMFlag = {0};
 
 /**
   * @brief  初始化TIM6定时器，
@@ -43,6 +46,8 @@ static void TIM6_Init(u16 arr,u16 psc)
 
 static u16 LEDCount = 0;
 static u8 CANSendCount = 0;
+static u16 N720InitCount = 0;
+u8 gN720InitStep = 0;
 
 void TIM6_IRQHandler(void)	 //TIM2中断
 {
@@ -76,8 +81,61 @@ void TIM6_IRQHandler(void)	 //TIM2中断
 			LEDCount = 0;
 		}
 
+		/*N720 INIT*/
+		if((g_N720InitTIMFlag.bits.bN720StartInitFlag == 0) && (gN720InitStep == N720StartSend))
+		{
+			N720InitCount++;
+			if(N720InitCount == DELAY10S)
+			{
+				g_N720InitTIMFlag.bits.bN720StartInitFlag = 1;
+				gN720InitStep = N720SendAT;
+				N720InitCount = 0;
+			}
+		}
+		
+		if((g_N720InitTIMFlag.bits.bN720SendATCommandFlag == 0) && (gN720InitStep == N720SendAT))
+		{
+			N720InitCount++;
+			if(N720InitCount == DELAY1S)
+			{
+				g_N720InitTIMFlag.bits.bN720SendATCommandFlag = 1;
+				N720InitCount = 0;
+			}
+		}
+		
+		if((g_N720InitTIMFlag.bits.bN720SendATICommandFlag == 0) && (gN720InitStep == N720SendATI))
+		{
+			N720InitCount++;
+			if(N720InitCount == DELAY1S)
+			{
+				g_N720InitTIMFlag.bits.bN720SendATICommandFlag = 1;
+				N720InitCount = 0;
+			}
+		}
+
+		if((g_N720InitTIMFlag.bits.bN720SendATCCIDCommandFlag == 0) && (gN720InitStep == N720SendATCCID))
+		{
+			N720InitCount++;
+			if(N720InitCount == DELAY1S)
+			{
+				g_N720InitTIMFlag.bits.bN720SendATCCIDCommandFlag = 1;
+				N720InitCount = 0;
+			}
+		}
+
+		if((g_N720InitTIMFlag.bits.bN720SendATCPINCommandFlag == 0) && (gN720InitStep == N720SendATCPIN))
+		{
+			N720InitCount++;
+			if(N720InitCount == DELAY1S)
+			{
+				g_N720InitTIMFlag.bits.bN720SendATCPINCommandFlag = 1;
+				N720InitCount = 0;
+			}
+		}
 	}
 }
+
+
 void TIM_INIT(void)
 {
 

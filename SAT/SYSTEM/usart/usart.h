@@ -35,10 +35,43 @@ typedef struct
 	u8 USART_RX_Flag;
 }UARTData;
 
+typedef union
+{
+	u16 Byte;
+	struct 
+	{
+		u8 bN720RecvATInfoFlag : 1;
+		u8 bN720RecvATIInfoFlag : 1;
+		u8 bN720RecvATCCIDInfoFlag : 1;
+		u8 bN720RecvATCPINInfoFlag : 1;
+		u8 bN720RecvATCSQInfoFlag : 1;
+		u8 bN720RecvATCREGInfoFlag : 1;
+		u8 bN720RecvATCGATTInfoFlag : 1;
+		u8 bN720RecvATMYSYSINFOInfoFlag : 1;
+		u8 b8 : 1;
+		u8 bnull : 7;
+	}bits;
+}STRUCT_InitRECVFlag;
+extern STRUCT_InitRECVFlag g_N720InitRecvFlag;
+
+typedef struct
+{
+	u8 SoftwareVerBuf[4];	//软件版本
+	u8 CCIDBuf[20];
+	u8 CPINBuf[10];
+	u8 CSQBuf[6];
+	u8 CREGBuf[4];
+	u8 CGATTBuf[1];
+	u8 MYSYSINFOBuf[4];
+}STRUCT_N720_INFO;
+extern STRUCT_N720_INFO gN720Info;
+
+
 extern UARTData gUARTData[USART_REC_BUF]; 
 extern u16 USART_RX_STA;         		//接收状态标记	
 //如果想串口中断接收，请不要注释以下宏定义
 void uart_init(u32 bound);
+void USART_Send_String(u8 *buf);
 
 #endif
 
