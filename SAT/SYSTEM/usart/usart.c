@@ -96,14 +96,13 @@ void uart_init(u32 bound)
 
 STRUCT_InitRECVFlag g_N720InitRecvFlag = {0};
 
-
-u8 const ATCMDATIHeadBuf[]= {"\r\nNEOWAY\r\nN720\r\n"};
-u8 const ATCMDATCCIDHeadBuf[] = {"\r\n+CCID:"};
-u8 const ATCMDATCPINHeadBuf[] = {"+CPIN:\r\nOK\r\n"};		
+u8 const ATCMDATIHeadBuf[]= {"NEOWAY\r\nN720\r\n"};
+u8 const ATCMDATCCIDHeadBuf[] = {"+CCID:"};
+u8 const ATCMDATCPINHeadBuf[] = {"+CPIN:"};		
 u8 const ATCMDATCSQHeadBuf[] = {"+CSQ:"};
 u8 const ATCMDATCREGHeadBuf[] = {"+CREG:"};
 u8 const ATCMDATCGATTHeadBuf[] = {"+CGATT:"};
-u8 const ATCMDATMYSYSINFOHeadBuf[] = {"\r\n$MYSYSINFO:"};
+u8 const ATCMDATMYSYSINFOHeadBuf[] = {"$MYSYSINFO:"};
 
 u8 const ATCMDTailBuf[] = {"\r\nOK\r\n"};
 	
@@ -113,6 +112,7 @@ static u8 ATRecvStep = 0;
 static u8 ATDataCount = 0;
 STRUCT_N720_INFO gN720Info = {0};
 
+
 void USART1_IRQHandler(void)                	//串口1中断服务程序
 {
 	u8 Res;
@@ -120,461 +120,469 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序
 	{
 		Res = USART_ReceiveData(USART1);	//读取接收到的数据
 
-		
 		/*4G模块初始化,接收到发送AT命令后的回复*/
-		switch(gN720InitStep)
+		if(g_N720InitRecvFlag.bits.bN720InitFinish == 0)
 		{
-			case  N720SendAT:
-	        {
-		        if(ATCMDTailBuf[ATCMDTailCount] == Res)
+			switch(gN720InitStep)
+			{
+				case  N720SendAT:
 		        {
-		            if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
-		            {
-						//printf("44:%d\r\n",(sizeof(ATCMDTailBuf)/sizeof(ATCMDTailBuf[0])-2));
-		                ATCMDTailCount = 0;
-						//gN720InitStep = N720SendATI;
-						g_N720InitRecvFlag.bits.bN720RecvATInfoFlag = 1;
-						return ;
-		            }
-		            else
-		            {
-		                ATCMDTailCount++;
-		            }
-		        }
-		        else
-		        {
-		            ATCMDTailCount = 0;
-		        }
+			        if(ATCMDTailBuf[ATCMDTailCount] == Res)
+			        {
+			            if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
+			            {
+							//printf("44:%d\r\n",(sizeof(ATCMDTailBuf)/sizeof(ATCMDTailBuf[0])-2));
+			                ATCMDTailCount = 0;
+							//gN720InitStep = N720SendATI;
+							g_N720InitRecvFlag.bits.bN720RecvATInfoFlag = 1;
+							return ;
+			            }
+			            else
+			            {
+			                ATCMDTailCount++;
+			            }
+			        }
+			        else
+			        {
+			            ATCMDTailCount = 0;
+			        }
+				}
+				break;
+				
+				case N720SendATI:
+				{
+					switch(ATRecvStep)
+					{
+						case 0:
+							if(ATCMDATIHeadBuf[ATCMDHeadCount] == Res)
+							{
+								if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDATIHeadBuf)-2))
+								{
+									ATCMDHeadCount = 0;
+									ATRecvStep = 1;
+								}
+								else
+								{
+									ATCMDHeadCount++;
+	//								printf("n");
+								}
+							}
+							else
+							{
+								ATCMDHeadCount = 0;
+	//							printf("%x",Res);
+							}
+							break;
+						case 1:
+							if(ATCMDTailBuf[ATCMDTailCount] == Res)
+							{
+								//ATDataCount = 0;
+								ATRecvStep = 2;
+	//							printf("x");
+							}
+							else
+							{
+								gN720Info.SoftwareVerBuf[ATDataCount++] = Res;
+	//							printf("%2x",Res);
+							}
+							
+							break;
+						case 2:
+							//printf("bb:%x\r\n",Res);
+							
+							if(ATCMDTailBuf[++ATCMDTailCount] == Res)
+							{
+								if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
+								{
+									g_N720InitRecvFlag.bits.bN720RecvATIInfoFlag = 1;
+									ATRecvStep = 0;
+									ATCMDTailCount = 0;
+									ATCMDHeadCount = 0;
+									ATDataCount = 0;
+	//								printf("22\r\n");
+								}
+	//							printf("33\r\n");
+							}
+							else
+							{
+								ATRecvStep = 0;
+								ATCMDTailCount = 0;
+								ATCMDHeadCount = 0;
+								ATDataCount = 0;
+	//							printf("44\r\n");
+							}
+							break;
+						default:
+							break;
+					}
+				}
+				break;
+
+				case N720SendATCCID:
+				{
+					switch(ATRecvStep)
+					{
+						case 0:
+							if(ATCMDATCCIDHeadBuf[ATCMDHeadCount] == Res)
+							{
+								if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDATCCIDHeadBuf)-2))
+								{
+									ATCMDHeadCount = 0;
+									ATRecvStep = 1;
+								}
+								else
+								{
+									ATCMDHeadCount++;
+								}
+							}
+							else
+							{
+								ATCMDHeadCount = 0;
+							}
+							break;
+						case 1:
+							if(ATCMDTailBuf[ATCMDTailCount] == Res)
+							{
+								ATRecvStep = 2;
+							}
+							else
+							{
+								gN720Info.CCIDBuf[ATDataCount++] = Res;
+							}
+							
+							break;
+						case 2:
+							if(ATCMDTailBuf[++ATCMDTailCount] == Res)
+							{
+								if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
+								{
+									g_N720InitRecvFlag.bits.bN720RecvATCCIDInfoFlag = 1;
+									ATRecvStep = 0;
+									ATCMDTailCount = 0;
+									ATCMDHeadCount = 0;
+									ATDataCount = 0;
+								}
+							}
+							else
+							{
+								ATRecvStep = 0;
+								ATCMDTailCount = 0;
+								ATCMDHeadCount = 0;
+								ATDataCount = 0;
+								//printf("44\r\n");
+							}
+							break;
+						default:
+							break;
+					}
+				}
+				break;
+				case N720SendATCPIN:
+				{
+					switch(ATRecvStep)
+					{
+						case 0:
+							if(ATCMDATCPINHeadBuf[ATCMDHeadCount] == Res)
+							{
+								if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDATCPINHeadBuf)-2))
+								{
+									ATCMDHeadCount = 0;
+									ATRecvStep = 1;
+								}
+								else
+								{
+									ATCMDHeadCount++;
+								}
+							}
+							else
+							{
+								ATCMDHeadCount = 0;
+							}
+							break;
+						case 1:
+							if(ATCMDTailBuf[ATCMDTailCount] == Res)
+							{
+								ATRecvStep = 2;
+							}
+							else
+							{
+								gN720Info.CPINBuf[ATDataCount++] = Res;
+							}
+							
+							break;
+						case 2:
+							if(ATCMDTailBuf[++ATCMDTailCount] == Res)
+							{
+								if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
+								{
+									g_N720InitRecvFlag.bits.bN720RecvATCPINInfoFlag = 1;
+									ATRecvStep = 0;
+									ATCMDTailCount = 0;
+									ATCMDHeadCount = 0;
+									ATDataCount = 0;
+								}
+							}
+							else
+							{
+								ATRecvStep = 0;
+								ATCMDTailCount = 0;
+								ATCMDHeadCount = 0;
+								ATDataCount = 0;
+								//printf("44\r\n");
+							}
+							break;
+						default:
+							break;
+					}
+				}
+				break;
+
+	            case N720SendATCSQ:
+	            {
+	                switch(ATRecvStep)
+	                {
+	                    case 0:
+	                        if(ATCMDATCSQHeadBuf[ATCMDHeadCount] == Res)
+	                        {
+	                            if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDATCSQHeadBuf)-2))
+	                            {
+	                                ATCMDHeadCount = 0;
+	                                ATRecvStep = 1;
+	                            }
+	                            else
+	                            {
+	                                ATCMDHeadCount++;
+	                            }
+	                        }
+	                        else
+	                        {
+	                            ATCMDHeadCount = 0;
+	                        }
+	                        break;
+	                    case 1:
+	                        if(ATCMDTailBuf[ATCMDTailCount] == Res)
+	                        {
+	                            ATRecvStep = 2;
+	                        }
+	                        else
+	                        {
+	                            gN720Info.CSQBuf[ATDataCount++] = Res;
+	                        }
+	                        
+	                        break;
+	                    case 2:
+	                        if(ATCMDTailBuf[++ATCMDTailCount] == Res)
+	                        {
+	                            if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
+	                            {
+	                                g_N720InitRecvFlag.bits.bN720RecvATCSQInfoFlag = 1;
+	                                ATRecvStep = 0;
+	                                ATCMDTailCount = 0;
+	                                ATCMDHeadCount = 0;
+	                                ATDataCount = 0;
+	                            }
+	                        }
+	                        else
+	                        {
+	                            ATRecvStep = 0;
+	                            ATCMDTailCount = 0;
+	                            ATCMDHeadCount = 0;
+	                            ATDataCount = 0;
+	                            //printf("44\r\n");
+	                        }
+	                        break;
+	                    default:
+	                        break;
+	                }
+	            }
+	            break;
+				
+	            case N720SendATCREG:
+	            {
+	                switch(ATRecvStep)
+	                {
+	                    case 0:
+	                        if(ATCMDATCREGHeadBuf[ATCMDHeadCount] == Res)
+	                        {
+	                            if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDATCREGHeadBuf)-2))
+	                            {
+	                                ATCMDHeadCount = 0;
+	                                ATRecvStep = 1;
+	                            }
+	                            else
+	                            {
+	                                ATCMDHeadCount++;
+	                            }
+	                        }
+	                        else
+	                        {
+	                            ATCMDHeadCount = 0;
+	                        }
+	                        break;
+	                    case 1:
+	                        if(ATCMDTailBuf[ATCMDTailCount] == Res)
+	                        {
+	                            ATRecvStep = 2;
+	                        }
+	                        else
+	                        {
+	                            gN720Info.CREGBuf[ATDataCount++] = Res;
+	                        }
+	                        
+	                        break;
+	                    case 2:
+	                        if(ATCMDTailBuf[++ATCMDTailCount] == Res)
+	                        {
+	                            if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
+	                            {
+	                                g_N720InitRecvFlag.bits.bN720RecvATCREGInfoFlag = 1;
+	                                ATRecvStep = 0;
+	                                ATCMDTailCount = 0;
+	                                ATCMDHeadCount = 0;
+	                                ATDataCount = 0;
+	                            }
+	                        }
+	                        else
+	                        {
+	                            ATRecvStep = 0;
+	                            ATCMDTailCount = 0;
+	                            ATCMDHeadCount = 0;
+	                            ATDataCount = 0;
+	                            //printf("44\r\n");
+	                        }
+	                        break;
+	                    default:
+	                        break;
+	                }
+	            }
+	            break;
+	    		case N720SendATCGATT:
+	    			{
+	    				switch(ATRecvStep)
+	    				{
+	    					case 0:
+	    						if(ATCMDATCGATTHeadBuf[ATCMDHeadCount] == Res)
+	    						{
+	    							if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDATCGATTHeadBuf)-2))
+	    							{
+	    								ATCMDHeadCount = 0;
+	    								ATRecvStep = 1;
+	    							}
+	    							else
+	    							{
+	    								ATCMDHeadCount++;
+	    							}
+	    						}
+	    						else
+	    						{
+	    							ATCMDHeadCount = 0;
+	    						}
+	    						break;
+	    					case 1:
+	    						if(ATCMDTailBuf[ATCMDTailCount] == Res)
+	    						{
+	    							ATRecvStep = 2;
+	    						}
+	    						else
+	    						{
+	    							gN720Info.CGATTBuf[ATDataCount++] = Res;
+	    						}
+	    						
+	    						break;
+	    					case 2:
+	    						if(ATCMDTailBuf[++ATCMDTailCount] == Res)
+	    						{
+	    							if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
+	    							{
+	    								g_N720InitRecvFlag.bits.bN720RecvATCGATTInfoFlag = 1;
+	    								ATRecvStep = 0;
+	    								ATCMDTailCount = 0;
+	    								ATCMDHeadCount = 0;
+	    								ATDataCount = 0;
+	    							}
+	    						}
+	    						else
+	    						{
+	    							ATRecvStep = 0;
+	    							ATCMDTailCount = 0;
+	    							ATCMDHeadCount = 0;
+	    							ATDataCount = 0;
+	    							//printf("44\r\n");
+	    						}
+	    						break;
+	    					default:
+	    						break;
+	    				}
+	    			}
+	    			break;
+
+	    			case N720SendATMYSYSINFO:
+	    				{
+	    					switch(ATRecvStep)
+	    					{
+	    						case 0:
+	    							if(ATCMDATMYSYSINFOHeadBuf[ATCMDHeadCount] == Res)
+	    							{
+	    								if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDATMYSYSINFOHeadBuf)-2))
+	    								{
+	    									ATCMDHeadCount = 0;
+	    									ATRecvStep = 1;
+	    								}
+	    								else
+	    								{
+	    									ATCMDHeadCount++;
+	    								}
+	    							}
+	    							else
+	    							{
+	    								ATCMDHeadCount = 0;
+	    							}
+	    							break;
+	    						case 1:
+	    							if(ATCMDTailBuf[ATCMDTailCount] == Res)
+	    							{
+	    								ATRecvStep = 2;
+	    							}
+	    							else
+	    							{
+	    								gN720Info.MYSYSINFOBuf[ATDataCount++] = Res;
+	    							}
+	    							
+	    							break;
+	    						case 2:
+	    							if(ATCMDTailBuf[++ATCMDTailCount] == Res)
+	    							{
+	    								if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
+	    								{
+	    									g_N720InitRecvFlag.bits.bN720RecvATMYSYSINFOInfoFlag = 1;
+	    									ATRecvStep = 0;
+	    									ATCMDTailCount = 0;
+	    									ATCMDHeadCount = 0;
+	    									ATDataCount = 0;
+	    								}
+	    							}
+	    							else
+	    							{
+	    								ATRecvStep = 0;
+	    								ATCMDTailCount = 0;
+	    								ATCMDHeadCount = 0;
+	    								ATDataCount = 0;
+	    								//printf("44\r\n");
+	    							}
+	    							break;
+	    						default:
+	    							break;
+	    					}
+	    				}
+	    				break;
+	            
+	    			default:
+	    				break;
 			}
-			break;
+		}
+		else if(g_N720InitRecvFlag.bits.bN720InitFinish == 1)
+		{
 			
-			case N720SendATI:
-			{
-				switch(ATRecvStep)
-				{
-					case 0:
-						if(ATCMDATIHeadBuf[ATCMDHeadCount] == Res)
-						{
-							if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDATIHeadBuf)-2))
-							{
-								ATCMDHeadCount = 0;
-								ATRecvStep = 1;
-							}
-							else
-							{
-								ATCMDHeadCount++;
-							}
-						}
-						else
-						{
-							ATCMDHeadCount = 0;
-						}
-						break;
-					case 1:
-						if(ATCMDTailBuf[ATCMDTailCount] == Res)
-						{
-							//ATDataCount = 0;
-							ATRecvStep = 2;
-							//printf("aa:%x\r\n",Res);
-						}
-						else
-						{
-							gN720Info.SoftwareVerBuf[ATDataCount++] = Res;
-							//printf("%2x",Res);
-						}
-						
-						break;
-					case 2:
-						//printf("bb:%x\r\n",Res);
-						
-						if(ATCMDTailBuf[++ATCMDTailCount] == Res)
-						{
-							if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
-							{
-								g_N720InitRecvFlag.bits.bN720RecvATIInfoFlag = 1;
-								ATRecvStep = 0;
-								ATCMDTailCount = 0;
-								ATCMDHeadCount = 0;
-								ATDataCount = 0;
-								//printf("22\r\n");
-							}
-							//printf("33\r\n");
-						}
-						else
-						{
-							ATRecvStep = 0;
-							ATCMDTailCount = 0;
-							ATCMDHeadCount = 0;
-							ATDataCount = 0;
-							//printf("44\r\n");
-						}
-						break;
-					default:
-						break;
-				}
-			}
-			break;
-
-			case N720SendATCCID:
-			{
-				switch(ATRecvStep)
-				{
-					case 0:
-						if(ATCMDATCCIDHeadBuf[ATCMDHeadCount] == Res)
-						{
-							if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDATCCIDHeadBuf)-2))
-							{
-								ATCMDHeadCount = 0;
-								ATRecvStep = 1;
-							}
-							else
-							{
-								ATCMDHeadCount++;
-							}
-						}
-						else
-						{
-							ATCMDHeadCount = 0;
-						}
-						break;
-					case 1:
-						if(ATCMDTailBuf[ATCMDTailCount] == Res)
-						{
-							ATRecvStep = 2;
-						}
-						else
-						{
-							gN720Info.CCIDBuf[ATDataCount++] = Res;
-						}
-						
-						break;
-					case 2:
-						if(ATCMDTailBuf[++ATCMDTailCount] == Res)
-						{
-							if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
-							{
-								g_N720InitRecvFlag.bits.bN720RecvATCCIDInfoFlag = 1;
-								ATRecvStep = 0;
-								ATCMDTailCount = 0;
-								ATCMDHeadCount = 0;
-								ATDataCount = 0;
-							}
-						}
-						else
-						{
-							ATRecvStep = 0;
-							ATCMDTailCount = 0;
-							ATCMDHeadCount = 0;
-							ATDataCount = 0;
-							//printf("44\r\n");
-						}
-						break;
-					default:
-						break;
-				}
-			}
-			break;
-			case N720SendATCPIN:
-			{
-				switch(ATRecvStep)
-				{
-					case 0:
-						if(ATCMDATCPINHeadBuf[ATCMDHeadCount] == Res)
-						{
-							if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDATCPINHeadBuf)-2))
-							{
-								ATCMDHeadCount = 0;
-								ATRecvStep = 1;
-							}
-							else
-							{
-								ATCMDHeadCount++;
-							}
-						}
-						else
-						{
-							ATCMDHeadCount = 0;
-						}
-						break;
-					case 1:
-						if(ATCMDTailBuf[ATCMDTailCount] == Res)
-						{
-							ATRecvStep = 2;
-						}
-						else
-						{
-							gN720Info.CPINBuf[ATDataCount++] = Res;
-						}
-						
-						break;
-					case 2:
-						if(ATCMDTailBuf[++ATCMDTailCount] == Res)
-						{
-							if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
-							{
-								g_N720InitRecvFlag.bits.bN720RecvATCPINInfoFlag = 1;
-								ATRecvStep = 0;
-								ATCMDTailCount = 0;
-								ATCMDHeadCount = 0;
-								ATDataCount = 0;
-							}
-						}
-						else
-						{
-							ATRecvStep = 0;
-							ATCMDTailCount = 0;
-							ATCMDHeadCount = 0;
-							ATDataCount = 0;
-							//printf("44\r\n");
-						}
-						break;
-					default:
-						break;
-				}
-			}
-			break;
-
-            case N720SendATCSQ:
-            {
-                switch(ATRecvStep)
-                {
-                    case 0:
-                        if(ATCMDATCSQHeadBuf[ATCMDHeadCount] == Res)
-                        {
-                            if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDATCSQHeadBuf)-2))
-                            {
-                                ATCMDHeadCount = 0;
-                                ATRecvStep = 1;
-                            }
-                            else
-                            {
-                                ATCMDHeadCount++;
-                            }
-                        }
-                        else
-                        {
-                            ATCMDHeadCount = 0;
-                        }
-                        break;
-                    case 1:
-                        if(ATCMDTailBuf[ATCMDTailCount] == Res)
-                        {
-                            ATRecvStep = 2;
-                        }
-                        else
-                        {
-                            gN720Info.CSQBuf[ATDataCount++] = Res;
-                        }
-                        
-                        break;
-                    case 2:
-                        if(ATCMDTailBuf[++ATCMDTailCount] == Res)
-                        {
-                            if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
-                            {
-                                g_N720InitRecvFlag.bits.bN720RecvATCSQInfoFlag = 1;
-                                ATRecvStep = 0;
-                                ATCMDTailCount = 0;
-                                ATCMDHeadCount = 0;
-                                ATDataCount = 0;
-                            }
-                        }
-                        else
-                        {
-                            ATRecvStep = 0;
-                            ATCMDTailCount = 0;
-                            ATCMDHeadCount = 0;
-                            ATDataCount = 0;
-                            //printf("44\r\n");
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-            break;
-			
-            case N720SendATCREG:
-            {
-                switch(ATRecvStep)
-                {
-                    case 0:
-                        if(ATCMDATCREGHeadBuf[ATCMDHeadCount] == Res)
-                        {
-                            if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDATCREGHeadBuf)-2))
-                            {
-                                ATCMDHeadCount = 0;
-                                ATRecvStep = 1;
-                            }
-                            else
-                            {
-                                ATCMDHeadCount++;
-                            }
-                        }
-                        else
-                        {
-                            ATCMDHeadCount = 0;
-                        }
-                        break;
-                    case 1:
-                        if(ATCMDTailBuf[ATCMDTailCount] == Res)
-                        {
-                            ATRecvStep = 2;
-                        }
-                        else
-                        {
-                            gN720Info.CREGBuf[ATDataCount++] = Res;
-                        }
-                        
-                        break;
-                    case 2:
-                        if(ATCMDTailBuf[++ATCMDTailCount] == Res)
-                        {
-                            if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
-                            {
-                                g_N720InitRecvFlag.bits.bN720RecvATCREGInfoFlag = 1;
-                                ATRecvStep = 0;
-                                ATCMDTailCount = 0;
-                                ATCMDHeadCount = 0;
-                                ATDataCount = 0;
-                            }
-                        }
-                        else
-                        {
-                            ATRecvStep = 0;
-                            ATCMDTailCount = 0;
-                            ATCMDHeadCount = 0;
-                            ATDataCount = 0;
-                            //printf("44\r\n");
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-            break;
-    		case N720SendATCGATT:
-    			{
-    				switch(ATRecvStep)
-    				{
-    					case 0:
-    						if(ATCMDATCGATTHeadBuf[ATCMDHeadCount] == Res)
-    						{
-    							if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDATCGATTHeadBuf)-2))
-    							{
-    								ATCMDHeadCount = 0;
-    								ATRecvStep = 1;
-    							}
-    							else
-    							{
-    								ATCMDHeadCount++;
-    							}
-    						}
-    						else
-    						{
-    							ATCMDHeadCount = 0;
-    						}
-    						break;
-    					case 1:
-    						if(ATCMDTailBuf[ATCMDTailCount] == Res)
-    						{
-    							ATRecvStep = 2;
-    						}
-    						else
-    						{
-    							gN720Info.CGATTBuf[ATDataCount++] = Res;
-    						}
-    						
-    						break;
-    					case 2:
-    						if(ATCMDTailBuf[++ATCMDTailCount] == Res)
-    						{
-    							if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
-    							{
-    								g_N720InitRecvFlag.bits.bN720RecvATCGATTInfoFlag = 1;
-    								ATRecvStep = 0;
-    								ATCMDTailCount = 0;
-    								ATCMDHeadCount = 0;
-    								ATDataCount = 0;
-    							}
-    						}
-    						else
-    						{
-    							ATRecvStep = 0;
-    							ATCMDTailCount = 0;
-    							ATCMDHeadCount = 0;
-    							ATDataCount = 0;
-    							//printf("44\r\n");
-    						}
-    						break;
-    					default:
-    						break;
-    				}
-    			}
-    			break;
-
-    			case N720SendATMYSYSINFO:
-    				{
-    					switch(ATRecvStep)
-    					{
-    						case 0:
-    							if(ATCMDATMYSYSINFOHeadBuf[ATCMDHeadCount] == Res)
-    							{
-    								if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDATMYSYSINFOHeadBuf)-2))
-    								{
-    									ATCMDHeadCount = 0;
-    									ATRecvStep = 1;
-    								}
-    								else
-    								{
-    									ATCMDHeadCount++;
-    								}
-    							}
-    							else
-    							{
-    								ATCMDHeadCount = 0;
-    							}
-    							break;
-    						case 1:
-    							if(ATCMDTailBuf[ATCMDTailCount] == Res)
-    							{
-    								ATRecvStep = 2;
-    							}
-    							else
-    							{
-    								gN720Info.MYSYSINFOBuf[ATDataCount++] = Res;
-    							}
-    							
-    							break;
-    						case 2:
-    							if(ATCMDTailBuf[++ATCMDTailCount] == Res)
-    							{
-    								if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
-    								{
-    									g_N720InitRecvFlag.bits.bN720RecvATMYSYSINFOInfoFlag = 1;
-    									ATRecvStep = 0;
-    									ATCMDTailCount = 0;
-    									ATCMDHeadCount = 0;
-    									ATDataCount = 0;
-    								}
-    							}
-    							else
-    							{
-    								ATRecvStep = 0;
-    								ATCMDTailCount = 0;
-    								ATCMDHeadCount = 0;
-    								ATDataCount = 0;
-    								//printf("44\r\n");
-    							}
-    							break;
-    						default:
-    							break;
-    					}
-    				}
-    				break;
-            
-    			default:
-    				break;
 		}
      } 
 } 
@@ -595,72 +603,3 @@ void USART_Send_String(u8 *buf)
 	}
 }
 
-#if 0
-void RecvATData(u8 Res,u8* ATHeadBuf,STRUCT_N720InitTIMFlag g_N720InitTIMFlag,u8 InitStep)
-{
-	switch(ATRecvStep)
-	{
-		case 0:
-			if(ATHeadBuf[ATCMDHeadCount] == Res)
-			{
-				if(ATCMDHeadCount == (ATCMDSIZEOF(ATHeadBuf)-2))
-				{
-					ATCMDHeadCount = 0;
-					ATRecvStep = 1;
-				}
-				else
-				{
-					ATCMDHeadCount++;
-				}
-			}
-			else
-			{
-				ATCMDHeadCount = 0;
-			}
-			break;
-		case 1:
-			if(ATCMDTailBuf[ATCMDTailCount] == Res)
-			{
-				//ATDataCount = 0;
-				ATRecvStep = 2;
-				//printf("aa:%x\r\n",Res);
-			}
-			else
-			{
-				gN720Info.CCIDBuf[ATDataCount++] = Res;
-				//printf("%2x",Res);
-			}
-			
-			break;
-		case 2:
-			//printf("bb:%x\r\n",Res);
-			
-			if(ATCMDTailBuf[++ATCMDTailCount] == Res)
-			{
-				if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
-				{
-					g_N720InitTIMFlag.bits.bN720SendATCPINCommandFlag = 1;
-					gN720InitStep = N720SendATCPIN;
-					ATRecvStep = 0;
-					ATCMDTailCount = 0;
-					ATCMDHeadCount = 0;
-					ATDataCount = 0;
-					//printf("22\r\n");
-				}
-				//printf("33\r\n");
-			}
-			else
-			{
-				ATRecvStep = 0;
-				ATCMDTailCount = 0;
-				ATCMDHeadCount = 0;
-				ATDataCount = 0;
-				//printf("44\r\n");
-			}
-			break;
-		default:
-			break;
-	}
-
-}
-#endif

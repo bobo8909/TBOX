@@ -48,7 +48,7 @@ typedef union
 		u8 bN720RecvATCREGInfoFlag : 1;
 		u8 bN720RecvATCGATTInfoFlag : 1;
 		u8 bN720RecvATMYSYSINFOInfoFlag : 1;
-		u8 b8 : 1;
+		u8 bN720InitFinish : 1;
 		u8 bnull : 7;
 	}bits;
 }STRUCT_InitRECVFlag;

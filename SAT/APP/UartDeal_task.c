@@ -1,5 +1,7 @@
 #include "UartDeal_task.h"
 
+const char CPINResponeBuf[] = {"READY"};
+
 
 void UartDeal_task(void)
 {
@@ -56,14 +58,17 @@ void UartDeal_task(void)
 	if(g_N720InitRecvFlag.bits.bN720RecvATCPINInfoFlag == 1)
 	{
 		printf("CPIN:");
-		for(i = 0;i < sizeof(gN720Info.CCIDBuf);i++)
+		for(i = 0;i < sizeof(gN720Info.CPINBuf);i++)
 		{
-			printf("%c",gN720Info.CCIDBuf[i]);
+			printf("%c",gN720Info.CPINBuf[i]);
 		}
 		printf("\r\n");
-			
-		gN720InitStep = N720SendATCSQ;
-		g_N720InitRecvFlag.bits.bN720RecvATCPINInfoFlag = 0;
+
+		if(strstr((const char*)gN720Info.CPINBuf,CPINResponeBuf) != NULL)
+		{
+			gN720InitStep = N720SendATCSQ;
+			g_N720InitRecvFlag.bits.bN720RecvATCPINInfoFlag = 0;
+		}
 	}
 
     if(g_N720InitRecvFlag.bits.bN720RecvATCSQInfoFlag == 1)
@@ -89,7 +94,7 @@ void UartDeal_task(void)
 		printf("\r\n");
 			
 		gN720InitStep = N720SendATCGATT;
-		g_N720InitRecvFlag.bits.bN720RecvATCGATTInfoFlag = 0;
+		g_N720InitRecvFlag.bits.bN720RecvATCREGInfoFlag = 0;
 	}
 
     if(g_N720InitRecvFlag.bits.bN720RecvATCGATTInfoFlag == 1)
@@ -116,6 +121,7 @@ void UartDeal_task(void)
 			
 		gN720InitStep = N720InitFinish;
 		g_N720InitRecvFlag.bits.bN720RecvATMYSYSINFOInfoFlag = 0;
+		g_N720InitRecvFlag.bits.bN720InitFinish = 1;
 	}
     
 }
