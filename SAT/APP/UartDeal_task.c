@@ -1,5 +1,6 @@
 #include "UartDeal_task.h"
 
+
 void UartDeal_task(void)
 {
 	u8 i = 0;
@@ -64,4 +65,57 @@ void UartDeal_task(void)
 		gN720InitStep = N720SendATCSQ;
 		g_N720InitRecvFlag.bits.bN720RecvATCPINInfoFlag = 0;
 	}
+
+    if(g_N720InitRecvFlag.bits.bN720RecvATCSQInfoFlag == 1)
+	{
+		printf("CSQ:");
+		for(i = 0;i < sizeof(gN720Info.CSQBuf);i++)
+		{
+			printf("%c",gN720Info.CSQBuf[i]);
+		}
+		printf("\r\n");
+			
+		gN720InitStep = N720SendATCREG;
+		g_N720InitRecvFlag.bits.bN720RecvATCSQInfoFlag = 0;
+	}
+
+    if(g_N720InitRecvFlag.bits.bN720RecvATCREGInfoFlag == 1)
+	{
+		printf("CREG:");
+		for(i = 0;i < sizeof(gN720Info.CREGBuf);i++)
+		{
+			printf("%c",gN720Info.CREGBuf[i]);
+		}
+		printf("\r\n");
+			
+		gN720InitStep = N720SendATCGATT;
+		g_N720InitRecvFlag.bits.bN720RecvATCGATTInfoFlag = 0;
+	}
+
+    if(g_N720InitRecvFlag.bits.bN720RecvATCGATTInfoFlag == 1)
+	{
+		printf("CGATT:");
+		for(i = 0;i < sizeof(gN720Info.CGATTBuf);i++)
+		{
+			printf("%c",gN720Info.CGATTBuf[i]);
+		}
+		printf("\r\n");
+			
+		gN720InitStep = N720SendATMYSYSINFO;
+		g_N720InitRecvFlag.bits.bN720RecvATCGATTInfoFlag = 0;
+	}
+
+    if(g_N720InitRecvFlag.bits.bN720RecvATMYSYSINFOInfoFlag == 1)
+	{
+		printf("MYSYSINFO:");
+		for(i = 0;i < sizeof(gN720Info.MYSYSINFOBuf);i++)
+		{
+			printf("%c",gN720Info.MYSYSINFOBuf[i]);
+		}
+		printf("\r\n");
+			
+		gN720InitStep = N720InitFinish;
+		g_N720InitRecvFlag.bits.bN720RecvATMYSYSINFOInfoFlag = 0;
+	}
+    
 }

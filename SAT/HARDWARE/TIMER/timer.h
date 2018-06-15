@@ -68,7 +68,7 @@ extern int PWM2OUT4;
 #define N720SendATCPIN 0x04
 #define N720SendATCSQ 0x05
 #define N720SendATCREG 0x06
-#define N720SendATCGA 0x07
+#define N720SendATCGATT 0x07
 #define N720SendATMYSYSINFO 0x08
 #define N720InitFinish 0xFE
 extern u8 gN720InitStep;

@@ -132,6 +132,48 @@ void TIM6_IRQHandler(void)	 //TIM2ÖÐ¶Ï
 				N720InitCount = 0;
 			}
 		}
+        
+		if((g_N720InitTIMFlag.bits.bN720SendATCSQCommandFlag == 0) && (gN720InitStep == N720SendATCSQ))
+		{
+			N720InitCount++;
+			if(N720InitCount == DELAY1S)
+			{
+				g_N720InitTIMFlag.bits.bN720SendATCSQCommandFlag = 1;
+				N720InitCount = 0;
+			}
+		}
+        
+        if((g_N720InitTIMFlag.bits.bN720SendATCREGCommandFlag == 0) && (gN720InitStep == N720SendATCREG))
+		{
+			N720InitCount++;
+			if(N720InitCount == DELAY1S)
+			{
+				g_N720InitTIMFlag.bits.bN720SendATCREGCommandFlag = 1;
+				N720InitCount = 0;
+			}
+		}
+
+        
+        if((g_N720InitTIMFlag.bits.bN720SendATCGATTCommandFlag == 0) && (gN720InitStep == N720SendATCGATT))
+		{
+			N720InitCount++;
+			if(N720InitCount == DELAY1S)
+			{
+				g_N720InitTIMFlag.bits.bN720SendATCGATTCommandFlag = 1;
+				N720InitCount = 0;
+			}
+		}
+
+        if((g_N720InitTIMFlag.bits.bN720SendATMYSYSINFOCommandFlag == 0) && (gN720InitStep == N720SendATMYSYSINFO))
+		{
+			N720InitCount++;
+			if(N720InitCount == DELAY1S)
+			{
+				g_N720InitTIMFlag.bits.bN720SendATMYSYSINFOCommandFlag = 1;
+				N720InitCount = 0;
+			}
+		}
+        
 	}
 }
 
