@@ -54,6 +54,25 @@ typedef union
 }STRUCT_InitRECVFlag;
 extern STRUCT_InitRECVFlag g_N720InitRecvFlag;
 
+typedef union
+{
+	u16 Byte;
+	struct 
+	{
+		u8 bN720RecvATInfoFlag : 1;
+		u8 bN720RecvATIInfoFlag : 1;
+		u8 bN720RecvATCCIDInfoFlag : 1;
+		u8 bN720RecvATCPINInfoFlag : 1;
+		u8 bN720RecvATCSQInfoFlag : 1;
+		u8 bN720RecvATCREGInfoFlag : 1;
+		u8 bN720RecvATCGATTInfoFlag : 1;
+		u8 bN720RecvATMYSYSINFOInfoFlag : 1;
+		u8 bN720InitFinish : 1;
+		u8 bnull : 7;
+	}bits;
+}STRUCT_TCPInitFlag;
+extern STRUCT_InitRECVFlag g_N720TCPInitFlag;
+
 typedef struct
 {
 	u8 SoftwareVerBuf[4];	//Èí¼þ°æ±¾

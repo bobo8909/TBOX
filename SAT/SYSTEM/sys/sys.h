@@ -18,6 +18,7 @@
 #include "iwdg.h"
 #include "exti.h"
 #include "N720_Driver.h"
+#include "N720_TCPInit.h"
 
 #include "CANsend_task.h"
 #include "CANrecv_task.h"
