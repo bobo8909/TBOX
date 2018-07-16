@@ -47,7 +47,7 @@ int GetKey (void)  {
  
 #if EN_USART1_RX   //如果使能了接收
 	  
-UARTData gUARTData[USART_REC_BUF] = {{0},0};	  
+//UARTData gUARTData[USART_REC_BUF] = {{0},0};	  
   
 void uart_init(u32 bound)
 {
@@ -63,7 +63,7 @@ void uart_init(u32 bound)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;	//复用推挽输出
     GPIO_Init(GPIOA, &GPIO_InitStructure);//初始化GPIOA.9
-     
+    
     //USART1_RX	  GPIOA.10初始化
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;//PA10
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;//浮空输入
@@ -90,6 +90,7 @@ void uart_init(u32 bound)
 	USART_Cmd(USART1, ENABLE);                    //使能串口1 
 
 }
+#if 0
 
 /*N720 AT指令接收*/
 #define ATCMDSIZEOF(A) (sizeof(A)/sizeof(A[0]))
@@ -586,9 +587,8 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序
 		}
      } 
 } 
+
 #endif	
-
-
 void USART_Send_String(u8 *buf)
 {
 	//printf("   buf:0x%x,0x%x  ",buf[0],buf[1]);
@@ -602,4 +602,5 @@ void USART_Send_String(u8 *buf)
 			return;
 	}
 }
+#endif
 

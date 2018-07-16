@@ -28,7 +28,7 @@ __asm void MSR_MSP(u32 addr)
 static void System_clock(void)
 {	
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1 | RCC_APB1Periph_TIM2 | RCC_APB1Periph_TIM3 | RCC_APB1Periph_TIM4 
-						 | RCC_APB1Periph_TIM5 | RCC_APB1Periph_TIM6 |RCC_APB1Periph_DAC, ENABLE);	
+						 | RCC_APB1Periph_TIM5 | RCC_APB1Periph_TIM6 |RCC_APB1Periph_DAC|RCC_APB1Periph_USART2, ENABLE);	
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_TIM1 | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB 
 						 | RCC_APB2Periph_GPIOC| RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE |RCC_APB2Periph_GPIOF
@@ -45,6 +45,7 @@ void System_init(void)
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);	 //设置NVIC中断分组2:2位抢占优先级，2位响应优先级
     
     uart_init(115200);	 //串口初始化为115200
+    uart2_init(115200);	 //串口初始化为115200
     
  	CanModeInit(CAN_SJW_1tq,CAN_BS2_2tq, CAN_BS1_3tq, 24, CAN_Mode_Normal);//CAN普通模式初始化, 波特率250Kbps 
  	
@@ -54,7 +55,8 @@ void System_init(void)
 	
 	LED_Init(); 			 //LED端口初始化
 	
-	
+	IO_init();
+    
 	printf("system init finish\r\n");
 }
 

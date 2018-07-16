@@ -147,7 +147,7 @@ void UartSendData_task(void)
 		{
 			for(j = 0; j < USART_SEND_LEN; j++)
 			{
-				USART_SendData(USART1,(u16)gUartSendData[i].UartSendBuf[j]);		
+				USART_SendData(USART2,(u16)gUartSendData[i].UartSendBuf[j]);		
 			}
 			printf("\r\n");
 			memset(gUartSendData[i].UartSendBuf,0,USART_SEND_LEN);

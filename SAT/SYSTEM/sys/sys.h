@@ -7,11 +7,13 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "led.h"
 #include "delay.h"
 #include "sys.h"
 #include "usart.h"
+#include "usart2.h"
 #include "timer.h"
 #include "can.h"
 #include "driver_IO.h"

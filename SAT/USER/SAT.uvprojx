@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\KEY;..\HARDWARE\TIMER;..\HARDWARE\CAN;..\APP;..\HARDWARE\Speed;..\HARDWARE\Driver_IO;..\HARDWARE\SPI;..\HARDWARE\AD5734R;..\HARDWARE\IWDG;..\HARDWARE\ADC;..\HARDWARE\DAC;..\HARDWARE\EXTI;..\HARDWARE\N720_Driver</IncludePath>
+              <IncludePath>..\HARDWARE\LED;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\STM32F10x_FWLib\inc;..\CORE;..\HARDWARE\KEY;..\HARDWARE\TIMER;..\HARDWARE\CAN;..\APP;..\HARDWARE\Speed;..\HARDWARE\Driver_IO;..\HARDWARE\SPI;..\HARDWARE\AD5734R;..\HARDWARE\IWDG;..\HARDWARE\ADC;..\HARDWARE\DAC;..\HARDWARE\EXTI;..\HARDWARE\N720_Driver;..\SYSTEM\usart2</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -507,6 +507,11 @@
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\usart\usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SYSTEM\usart2\usart2.c</FilePath>
             </File>
           </Files>
         </Group>

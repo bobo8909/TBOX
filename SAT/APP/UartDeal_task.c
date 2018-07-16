@@ -6,6 +6,9 @@ const char CPINResponeBuf[] = {"READY"};
 void UartDeal_task(void)
 {
 	u8 i = 0;
+    
+    char N720CSQX[2] = {0},N720CSQY[2] = {0};
+    u8 N720CSQXValue = 0,N720CSQYValue = 0;
 #if 0
 	static u8 UartDealIndex = 0;
 
@@ -79,8 +82,14 @@ void UartDeal_task(void)
 			printf("%c",gN720Info.CSQBuf[i]);
 		}
 		printf("\r\n");
-			
-		gN720InitStep = N720SendATCREG;
+        memcpy(N720CSQX, gN720Info.CSQBuf + 1, 2);
+        N720CSQXValue = atoi(N720CSQX);
+        memcpy(N720CSQY, gN720Info.CSQBuf + 4, 2);
+        N720CSQYValue = atoi(N720CSQY);
+        if((N720CSQXValue <= 31) && (N720CSQXValue >= 12))
+        {
+            gN720InitStep = N720SendATCREG;
+        }
 		g_N720InitRecvFlag.bits.bN720RecvATCSQInfoFlag = 0;
 	}
 
@@ -92,8 +101,10 @@ void UartDeal_task(void)
 			printf("%c",gN720Info.CREGBuf[i]);
 		}
 		printf("\r\n");
-			
-		gN720InitStep = N720SendATCGATT;
+		if((gN720Info.CREGBuf[3] == '1') ||(gN720Info.CREGBuf[3] == '5'))	
+		{
+		    gN720InitStep = N720SendATCGATT;
+        }
 		g_N720InitRecvFlag.bits.bN720RecvATCREGInfoFlag = 0;
 	}
 
@@ -105,8 +116,10 @@ void UartDeal_task(void)
 			printf("%c",gN720Info.CGATTBuf[i]);
 		}
 		printf("\r\n");
-			
-		gN720InitStep = N720SendATMYSYSINFO;
+		if(gN720Info.CGATTBuf[1] == '1')
+		{
+		    gN720InitStep = N720SendATMYSYSINFO;
+        }
 		g_N720InitRecvFlag.bits.bN720RecvATCGATTInfoFlag = 0;
 	}
 

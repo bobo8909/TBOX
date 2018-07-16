@@ -2,8 +2,7 @@
 #define __LED_H	 
 #include "sys.h"
 
-#define LED0 PBout(5)// PB5
-#define LED1 PEout(5)// PE5	
+#define LED0 PFout(6)// PB5
 
 #define LED_ON 1
 #define LED_OFF 0
