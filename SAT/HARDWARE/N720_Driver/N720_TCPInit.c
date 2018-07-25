@@ -88,6 +88,6 @@ void N720_TCPInit(void)
         USART2_Send_String(SendData[0]);
         if(i == 5)
             i = 0;
-        //gN720TCPInitStep = N720TCPInitFinish;
+        gN720TCPInitStep = N720TCPInitFinish;
     }
 }
