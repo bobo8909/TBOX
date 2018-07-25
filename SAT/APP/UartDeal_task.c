@@ -244,7 +244,7 @@ void UartDeal_task(void)
         printf("\r\n");
         g_N720TCPInitFlag.bits.bN720SendATSendDataSuccessCommandFlag = 0;
         
-        //gN720TCPInitStep = N720SendTCPSEND;
-        //g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 0;
+        gN720TCPInitStep = N720SendTCPSEND;
+        g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 0;
     }
 }

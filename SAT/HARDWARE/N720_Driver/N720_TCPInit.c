@@ -85,7 +85,7 @@ void N720_TCPInit(void)
     {
         printf("send data\r\n");
         g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag = 0;
-        USART2_Send_String(SendData[0]);
+        USART2_Send_String(SendData[i++]);
         if(i == 5)
             i = 0;
         gN720TCPInitStep = N720TCPInitFinish;
