@@ -130,11 +130,11 @@ void ATCommSendCAN(void)
 }
 
 
-
 void UartSendData_task(void)
 
 {
 	u16 i = 0,j = 0;
+
 	//if(g_TIMFlag.bits.ATUartSendFlag == 1)
 	{
 		ATCommSendCAN();

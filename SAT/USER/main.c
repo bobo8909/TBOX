@@ -12,8 +12,10 @@ int main(void)
     	IWDG_Feed();  //Î¹¹·
     #if 1 	
 		N720Init();
-		
-		Led_task();
+    
+		N720_TCPInit();
+
+        Led_task();
 		
 		UartDeal_task();
     #endif

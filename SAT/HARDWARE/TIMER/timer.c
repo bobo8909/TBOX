@@ -5,6 +5,7 @@
 /*global value*/
 STRUCT_TIMFLAG g_TIMFlag = {0};
 STRUCT_N720InitTIMFlag g_N720InitTIMFlag = {0};
+STRUCT_N720TCPInitTIMFlag g_N720TCPInitTIMFlag = {0};
 
 /**
   * @brief  初始化TIM6定时器，
@@ -48,7 +49,7 @@ static u16 LEDCount = 0;
 static u8 CANSendCount = 0;
 static u16 N720InitCount = 0;
 u8 gN720InitStep = 0;
-
+u8 gN720TCPInitStep = 0;
 void TIM6_IRQHandler(void)	 //TIM2中断
 {
 
@@ -173,7 +174,87 @@ void TIM6_IRQHandler(void)	 //TIM2中断
 				N720InitCount = 0;
 			}
 		}
+
+        if((g_N720TCPInitTIMFlag.bits.bN720SendATCGDCONTCommandFlag == 0) && (gN720TCPInitStep == N720SendTCPCGDCONT))
+		{
+			N720InitCount++;
+			if(N720InitCount == DELAY1S)
+			{
+				g_N720TCPInitTIMFlag.bits.bN720SendATCGDCONTCommandFlag = 1;
+				N720InitCount = 0;
+			}
+		}
+
+        if((g_N720TCPInitTIMFlag.bits.bN720SendATXIICCommandFlag == 0) && (gN720TCPInitStep == N720SendTCPXIIC))
+		{
+			N720InitCount++;
+			if(N720InitCount == DELAY1S)
+			{
+				g_N720TCPInitTIMFlag.bits.bN720SendATXIICCommandFlag = 1;
+				N720InitCount = 0;
+			}
+		}
+
+        if((g_N720TCPInitTIMFlag.bits.bN720SendATXIIC1CommandFlag == 0) && (gN720TCPInitStep == N720SendTCPXIIC1))
+		{
+			N720InitCount++;
+			if(N720InitCount == DELAY1S)
+			{
+				g_N720TCPInitTIMFlag.bits.bN720SendATXIIC1CommandFlag = 1;
+				N720InitCount = 0;
+			}
+		}
+
         
+        if((g_N720TCPInitTIMFlag.bits.bN720SendATTCPCLOSECommandFlag == 0) && (gN720TCPInitStep == N720SendTCPCLOSE))
+		{
+			N720InitCount++;
+			if(N720InitCount == DELAY1S)
+			{
+				g_N720TCPInitTIMFlag.bits.bN720SendATTCPCLOSECommandFlag = 1;
+				N720InitCount = 0;
+			}
+		}
+#if 1      
+        if((g_N720TCPInitTIMFlag.bits.bN720SendATTCPSETUPCommandFlag == 0) && (gN720TCPInitStep == N720SendTCPSETUP))
+		{
+			N720InitCount++;
+			if(N720InitCount == DELAY1S)
+			{
+				g_N720TCPInitTIMFlag.bits.bN720SendATTCPSETUPCommandFlag = 1;
+				N720InitCount = 0;
+			}
+		}
+#endif
+    if((g_N720TCPInitTIMFlag.bits.bN720SendATXGAUTHCommandFlag == 0) && (gN720TCPInitStep == N720SendTCPXGAUTH))
+    {
+        N720InitCount++;
+        if(N720InitCount == DELAY1S)
+        {
+            g_N720TCPInitTIMFlag.bits.bN720SendATXGAUTHCommandFlag = 1;
+            N720InitCount = 0;
+        }
+    }
+#if 0
+    if((g_N720TCPInitTIMFlag.bits.bN720SendATTCPACKCommandFlag == 0) && (gN720TCPInitStep == N720SendTCPACK))
+    {
+        N720InitCount++;
+        if(N720InitCount == DELAY1S)
+        {
+            g_N720TCPInitTIMFlag.bits.bN720SendATXGAUTHCommandFlag = 1;
+            N720InitCount = 0;
+        }
+    }
+#endif
+        if(g_N720TCPInitTIMFlag.bits.bN720SendATPrepareSendCommandFlag == 1)
+        {
+             N720InitCount++;
+             if(N720InitCount == 100)
+             {
+                g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag = 1;
+                g_N720TCPInitTIMFlag.bits.bN720SendATPrepareSendCommandFlag = 0;
+             }
+        }
 	}
 }
 

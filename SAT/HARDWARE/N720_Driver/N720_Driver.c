@@ -1,6 +1,6 @@
 #include "N720_Driver.h"
 
-u8 *ATCommandBuf[] =
+static u8  *ATCommandBuf[] =
 			{
 				"AT\r",
 				"ATI\r",
@@ -9,7 +9,7 @@ u8 *ATCommandBuf[] =
 				"AT+CSQ\r",
 				"AT+CREG?\r",
 				"AT+CGATT?\r",
-				"AT$MYSYSINFO\r"
+                "AT$MYSYSINFO\r",
 			};
 
 			
@@ -81,3 +81,4 @@ void N720Init(void)
 	}
 	#endif
 }
+

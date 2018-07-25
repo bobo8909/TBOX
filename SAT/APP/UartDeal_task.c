@@ -133,8 +133,118 @@ void UartDeal_task(void)
 		printf("\r\n");
 			
 		gN720InitStep = N720InitFinish;
+        gN720TCPInitStep = N720SendTCPCGDCONT;
 		g_N720InitRecvFlag.bits.bN720RecvATMYSYSINFOInfoFlag = 0;
 		g_N720InitRecvFlag.bits.bN720InitFinish = 1;
 	}
+
+	if(g_N720TCPInitFlag.bits.bN720RecvATCGDCONTInfoFlag == 1)
+	{
+	    printf("recv cgdcont ok\r\n");
+		//for(i = 0;i < sizeof(gN720Info.TCPCGDCONT);i++)
+		//{
+		//	printf("%c",gN720Info.TCPCGDCONT[i]);
+		//}
+		//printf("\r\n");
+		gN720TCPInitStep = N720SendTCPXGAUTH;
+		g_N720TCPInitFlag.bits.bN720RecvATCGDCONTInfoFlag = 0;
+	}
+
+    if(g_N720TCPInitFlag.bits.bN720RecvATTCPXGAUTHInfoFlag == 1)
+    {        
+        printf("recv XGUATH ok\r\n");
+        
+		gN720TCPInitStep = N720SendTCPXIIC;
+        g_N720TCPInitFlag.bits.bN720RecvATTCPXGAUTHInfoFlag = 0;
+    }
     
+	if(g_N720TCPInitFlag.bits.bN720RecvATXIICInfoFlag == 1)
+	{
+	    printf("recv xiic\r\n");
+		gN720TCPInitStep = N720SendTCPXIIC1;
+		g_N720TCPInitFlag.bits.bN720RecvATXIICInfoFlag = 0;
+	}
+    
+	if(g_N720TCPInitFlag.bits.bN720RecvATXIIC1InfoFlag == 1)
+	{
+	    printf("xiic?:");
+		for(i = 0;i < sizeof(gN720Info.TCPXIIC);i++)
+		{
+			printf("%c",gN720Info.TCPXIIC[i]);
+		}
+		printf("\r\n");
+        if((gN720Info.TCPXIIC[0] != '0') &&(gN720Info.TCPXIIC[2] != '0'))
+		{
+		    gN720TCPInitStep = N720SendTCPCLOSE;
+        }
+		g_N720TCPInitFlag.bits.bN720RecvATXIIC1InfoFlag = 0;
+	}
+    
+	if(g_N720TCPInitFlag.bits.bN720RecvATTCPCLOSEInfoFlag == 1)
+	{
+	    printf("TCPCLOSE:");
+		for(i = 0;i < sizeof(gN720Info.TCPCLOSE);i++)
+		{
+			printf("%c",gN720Info.TCPCLOSE[i]);
+		}
+		printf("\r\n");
+		gN720TCPInitStep = N720SendTCPSETUP;
+		g_N720TCPInitFlag.bits.bN720RecvATTCPCLOSEInfoFlag = 0;
+	}
+
+	if( g_N720TCPInitFlag.bits.bN720RecvATTCPSETUPInfoFlag == 1)
+	{
+	    printf("TCPSETUP OK\r\n");
+
+		gN720TCPInitStep = N720SendTCPSETUPING;
+		g_N720TCPInitFlag.bits.bN720RecvATTCPSETUPInfoFlag = 0;
+	}    
+
+	if( g_N720TCPInitFlag.bits.bN720RecvATTCPSETUPINGInfoFlag == 1)
+	{
+	    printf("TCPSETUP:");
+		for(i = 0;i < sizeof(gN720Info.TCPSETUP);i++)
+		{
+			printf("%c",gN720Info.TCPSETUP[i]);
+		}
+		printf("\r\n");
+		gN720TCPInitStep = N720SendTCPACK;
+		g_N720TCPInitFlag.bits.bN720RecvATTCPSETUPINGInfoFlag = 0;
+	}    
+
+    if(g_N720TCPInitFlag.bits.bN720RecvATTCPACKInfoFlag == 1)
+    {
+        printf("TCPACK:");
+        for(i = 0;i < sizeof(gN720Info.TCPACK);i++)
+        {
+            printf("%c",gN720Info.TCPACK[i]);
+        }
+        printf("\r\n");
+        gN720TCPInitStep = N720SendTCPSEND;
+        g_N720TCPInitFlag.bits.bN720RecvATTCPACKInfoFlag = 0;
+    }
+
+    if(g_N720TCPInitFlag.bits.bN720RecvATTCPSENDInfoFlag == 1)
+    {
+        printf("start send data\r\n");
+        g_N720TCPInitTIMFlag.bits.bN720SendATPrepareSendCommandFlag = 1;
+        g_N720TCPInitFlag.bits.bN720RecvATTCPSENDInfoFlag = 0;
+        
+        gN720TCPInitStep = N720SendTCPSTARTSEND;
+    }
+
+    if(g_N720TCPInitFlag.bits.bN720SendATSendDataSuccessCommandFlag == 1)
+    {
+        
+        printf("Send data finish:");
+        for(i = 0;i < sizeof(gN720Info.TCPFinish);i++)
+        {
+            printf("%c",gN720Info.TCPFinish[i]);
+        }
+        printf("\r\n");
+        g_N720TCPInitFlag.bits.bN720SendATSendDataSuccessCommandFlag = 0;
+        
+        //gN720TCPInitStep = N720SendTCPSEND;
+        //g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 0;
+    }
 }
