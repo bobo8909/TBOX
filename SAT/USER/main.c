@@ -19,7 +19,7 @@ int main(void)
 		
 		UartDeal_task();
     #endif
-#if 0		
+#if 1		
 		UartSendData_task();		
 		/*处理接收到的CAN数据*/
 		CANrecv_task();

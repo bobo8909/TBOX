@@ -49,7 +49,8 @@ u8 CanModeInit(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 //		RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);//使能PORTA时钟	                   											 
 
 //  	RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE);//使能CAN1时钟	
-
+    
+#if 0
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;	//复用推挽
@@ -58,7 +59,19 @@ u8 CanModeInit(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;//上拉输入
     GPIO_Init(GPIOA, &GPIO_InitStructure);//初始化IO
-	  
+#else
+    GPIO_PinRemapConfig(GPIO_Remap1_CAN1, ENABLE);
+    
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; //复用推挽
+    GPIO_Init(GPIOB, &GPIO_InitStructure);      //初始化IO
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;//上拉输入
+    GPIO_Init(GPIOB, &GPIO_InitStructure);//初始化IO
+
+#endif
  	//CAN单元设置
 	CAN_InitStructure.CAN_TTCM = DISABLE;						 //非时间触发通信模式  //
 	CAN_InitStructure.CAN_ABOM = DISABLE;						 //软件自动离线管理	 //
@@ -107,7 +120,7 @@ u8 CanModeInit(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
   	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   	NVIC_Init(&NVIC_InitStructure);
 
-
+#if 0
 	CAN_ITConfig(CAN1,CAN_IT_EWG|CAN_IT_EPV|CAN_IT_BOF|CAN_IT_LEC|CAN_IT_ERR,ENABLE);
 
   	NVIC_InitStructure.NVIC_IRQChannel = CAN1_SCE_IRQn;
@@ -115,7 +128,7 @@ u8 CanModeInit(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
   	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;            // 次优先级为1
   	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   	NVIC_Init(&NVIC_InitStructure);
-	
+#endif	
 #endif
 	return 0;
 }   
@@ -151,24 +164,24 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 //		 其他,失败;
 u8 CanSendMsg(uint32_t u32CanId, u8* ptrMsg, u8 u8Len)
 {	
-  u8 mbox;
-  u16 i = 0;
-  CanTxMsg TxMessage;
-  TxMessage.StdId = 0;					 // 标准标识符 
-  TxMessage.ExtId = u32CanId;				   // 设置扩展标示符 
-  TxMessage.IDE = CAN_Id_Extended; // 扩展帧
-  TxMessage.RTR = CAN_RTR_Data;		 // 数据帧
-  TxMessage.DLC = u8Len;						// 要发送的数据长度
-  for(i = 0; i < u8Len; i++)
-  TxMessage.Data[i] = ptrMsg[i];			          
-  mbox = CAN_Transmit(CAN1, &TxMessage);   
-  i=0;
-  while((CAN_TransmitStatus(CAN1, mbox) == CAN_TxStatus_Failed)&&(i<0XFFF)) //等待发送结束
-  {
-	  i++;	
-  }
-  if(i>=0XFFF)return 1;
-  return 0;		
+    u8 mbox;
+    u16 i = 0;
+    CanTxMsg TxMessage;
+    TxMessage.StdId = 0;					 // 标准标识符 
+    TxMessage.ExtId = u32CanId;				   // 设置扩展标示符 
+    TxMessage.IDE = CAN_Id_Extended; // 扩展帧
+    TxMessage.RTR = CAN_RTR_Data;		 // 数据帧
+    TxMessage.DLC = u8Len;						// 要发送的数据长度
+    for(i = 0; i < u8Len; i++)
+    TxMessage.Data[i] = ptrMsg[i];			          
+    mbox = CAN_Transmit(CAN1, &TxMessage);   
+    i=0;
+    while((CAN_TransmitStatus(CAN1, mbox) == CAN_TxStatus_Failed)&&(i<0XFFF)) //等待发送结束
+    {
+      i++;	
+    }
+    if(i>=0XFFF)return 1;
+    return 0;		
 
 }
 //can口接收数据查询

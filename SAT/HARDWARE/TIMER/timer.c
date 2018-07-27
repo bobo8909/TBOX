@@ -34,8 +34,8 @@ static void TIM6_Init(u16 arr,u16 psc)
 
 	//中断优先级NVIC设置
 	NVIC_InitStructure.NVIC_IRQChannel = TIM6_IRQn;  //TIM3中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级1级
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;	//从优先级2级
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //先占优先级1级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;	//从优先级2级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //初始化NVIC寄存器
 
@@ -63,14 +63,14 @@ void TIM6_IRQHandler(void)	 //TIM2中断
 		if(g_TIMFlag.bits.CANFlag == 0)
 		{
 			CANSendCount++;
-			if(CANSendCount == 99)
+			if(CANSendCount == 100)
 			{
-				g_TIMFlag.bits.CANFlag = 1;
-				g_TIMFlag.bits.ATUartSendFlag = 1;
 				CANSendCount = 0;
+				g_TIMFlag.bits.CANFlag = 1;
+				//g_TIMFlag.bits.ATUartSendFlag = 1;
 			}
 		}
-		
+#if 1		
 		/*LED count*/
 		LEDCount++;
 		if(LEDCount == 499)
@@ -257,6 +257,7 @@ void TIM6_IRQHandler(void)	 //TIM2中断
                 g_N720TCPInitTIMFlag.bits.bN720SendATPrepareSendCommandFlag = 0;
              }
         }
+#endif
 	}
 }
 

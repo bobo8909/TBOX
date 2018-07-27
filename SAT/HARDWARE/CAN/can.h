@@ -232,7 +232,7 @@ extern STRUCT_EBS_1 g_EBS1RecvVal;
 extern CANRXBUF CANRecvEBSBuf ;
 extern CANRXBUF CANRecvDataBuf[3] ;
 
-#define RXMSG_LEN 20
+#define RXMSG_LEN 10
 extern CanRxMsg RxMessage;
 extern CANRXRAWDATA gCanRxRawDataBuf[RXMSG_LEN];
 

@@ -8,13 +8,13 @@ static u8 *TCPInitCommandBuf[] =
     "AT+TCPCLOSE=1\r",
     "AT+TCPSETUP=1,139.196.56.130,30102\r",
     "AT+TCPACK=1\r",
-    "AT+TCPSEND=1,10\r"
+    "AT+TCPSEND=1,40\r"
 };
-static u8 SendData[5][10] = {"1234567890","1111111111","2222222222","3333333333","4444444444"};
+//static u8 SendData[5][10] = {"1234567890","1111111111","2222222222","3333333333","4444444444"};
 
 void N720_TCPInit(void)
 {
-    static u8 i = 1;
+//    static u8 i = 1;
     if(g_N720TCPInitTIMFlag.bits.bN720SendATCGDCONTCommandFlag == 1)
     {
         printf("send ATCGDCONT\r\n");
@@ -80,7 +80,7 @@ void N720_TCPInit(void)
         g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 1;
     }
 
-    
+    #if 0
     if(g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag == 1)
     {
         printf("send data\r\n");
@@ -90,4 +90,5 @@ void N720_TCPInit(void)
             i = 0;
         gN720TCPInitStep = N720TCPInitFinish;
     }
+    #endif
 }
