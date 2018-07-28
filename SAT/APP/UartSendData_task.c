@@ -111,7 +111,7 @@ void ATCommSendCAN(void)
 		
 		memset(gCanRxRawDataBuf + CanRxCount, 0, sizeof(gCanRxRawDataBuf[0]));
 
-		#if 1
+		#if 0
 		printf("uartdata:");
 		for(i = 0; i < USART_SEND_LEN; i++)
 		{
@@ -161,7 +161,7 @@ void UartSendData_task(void)
 
         if(g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag == 1)
         {
-            printf("111\r\n");
+            //printf("111\r\n");
             g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag = 0;
             USART2_Send_String(gUartSendData[UartSendDataCount].UartSendBuf);
             gN720TCPInitStep = N720TCPInitFinish;

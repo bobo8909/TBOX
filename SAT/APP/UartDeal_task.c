@@ -247,4 +247,16 @@ void UartDeal_task(void)
         gN720TCPInitStep = N720SendTCPSEND;
         g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 0;
     }
+
+    if( g_N720InitRecvFlag.bits.bN720RecvCANDataFlag == 1)
+    {
+        g_N720InitRecvFlag.bits.bN720RecvCANDataFlag = 0;
+        printf("recv data\r\n");
+        for(i = 0;i < sizeof(gN720Info.TCPRecvCANData);i++)
+        {
+            printf("%c",gN720Info.TCPRecvCANData[i]);
+        }
+        printf("\r\n");
+    }
+    
 }
