@@ -2,7 +2,7 @@
 
 #define DELAY10S 10000
 #define DELAY1S 1000
-#define DELAY100MS 100
+#define SEND_DELAYMS 50
 /*global value*/
 STRUCT_TIMFLAG g_TIMFlag = {0};
 STRUCT_N720InitTIMFlag g_N720InitTIMFlag = {0};
@@ -250,7 +250,7 @@ void TIM6_IRQHandler(void)	 //TIM2ÖÐ¶Ï
         if(g_N720TCPInitTIMFlag.bits.bN720SendATPrepareSendCommandFlag == 1)
         {
              N720InitCount++;
-             if(N720InitCount == DELAY100MS)
+             if(N720InitCount == SEND_DELAYMS)
              {
                 N720InitCount = 0;
                 g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag = 1;
