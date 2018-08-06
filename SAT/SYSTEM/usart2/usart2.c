@@ -180,9 +180,9 @@ void USART2_IRQHandler(void)                	//串口1中断服务程序
 			{
 				case  N720SendAT:
 		        {
-			        if(ATCMDTailBuf[ATCMDTailCount] == Res)
+			        if(ATCMDTCPTailBuf[ATCMDTailCount] == Res)
 			        {
-			            if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
+			            if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTCPTailBuf)-2))
 			            {
 							//printf("44:%d\r\n",(sizeof(ATCMDTailBuf)/sizeof(ATCMDTailBuf[0])-2));
 			                ATCMDTailCount = 0;

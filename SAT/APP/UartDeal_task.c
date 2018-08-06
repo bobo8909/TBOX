@@ -2,7 +2,12 @@
 
 const char CPINResponeBuf[] = {"READY"};
 
-
+/**********************************
+ *函数名：void UartDeal_task(void)
+ *函数功能：接收串口数据处理任务
+ *参数:None
+ *返回值:none
+***********************************/
 void UartDeal_task(void)
 {
 	u8 i = 0;
@@ -89,6 +94,7 @@ void UartDeal_task(void)
         if((N720CSQXValue <= 31) && (N720CSQXValue >= 12))
         {
             gN720InitStep = N720SendATCREG;
+            CMDFailedCount = 0;
         }
 		g_N720InitRecvFlag.bits.bN720RecvATCSQInfoFlag = 0;
 	}
@@ -104,6 +110,7 @@ void UartDeal_task(void)
 		if((gN720Info.CREGBuf[3] == '1') ||(gN720Info.CREGBuf[3] == '5'))	
 		{
 		    gN720InitStep = N720SendATCGATT;
+            CMDFailedCount = 0;
         }
 		g_N720InitRecvFlag.bits.bN720RecvATCREGInfoFlag = 0;
 	}
@@ -119,6 +126,7 @@ void UartDeal_task(void)
 		if(gN720Info.CGATTBuf[1] == '1')
 		{
 		    gN720InitStep = N720SendATMYSYSINFO;
+            CMDFailedCount = 0;
         }
 		g_N720InitRecvFlag.bits.bN720RecvATCGATTInfoFlag = 0;
 	}
@@ -163,6 +171,9 @@ void UartDeal_task(void)
 	    printf("recv xiic\r\n");
 		gN720TCPInitStep = N720SendTCPXIIC1;
 		g_N720TCPInitFlag.bits.bN720RecvATXIICInfoFlag = 0;
+        
+        CMDFailedCount = 0;
+        ReconnectCount = 0;
 	}
     
 	if(g_N720TCPInitFlag.bits.bN720RecvATXIIC1InfoFlag == 1)
@@ -226,7 +237,7 @@ void UartDeal_task(void)
 
     if(g_N720TCPInitFlag.bits.bN720RecvATTCPSENDInfoFlag == 1)
     {
-        printf("start send data\r\n");
+        //printf("start send data\r\n");
         g_N720TCPInitTIMFlag.bits.bN720SendATPrepareSendCommandFlag = 1;
         g_N720TCPInitFlag.bits.bN720RecvATTCPSENDInfoFlag = 0;
         
@@ -237,10 +248,12 @@ void UartDeal_task(void)
     {
         
         printf("Send data finish:");
+        #if 0
         for(i = 0;i < sizeof(gN720Info.TCPFinish);i++)
         {
             printf("%c",gN720Info.TCPFinish[i]);
         }
+        #endif
         printf("\r\n");
         g_N720TCPInitFlag.bits.bN720SendATSendDataSuccessCommandFlag = 0;
         
@@ -251,12 +264,14 @@ void UartDeal_task(void)
     if( g_N720InitRecvFlag.bits.bN720RecvCANDataFlag == 1)
     {
         g_N720InitRecvFlag.bits.bN720RecvCANDataFlag = 0;
+    #if 0
         printf("recv data\r\n");
         for(i = 0;i < sizeof(gN720Info.TCPRecvCANData);i++)
         {
             printf("%c",gN720Info.TCPRecvCANData[i]);
         }
         printf("\r\n");
+    #endif
     }
     
 }

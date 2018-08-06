@@ -17,6 +17,12 @@ void LED_Init(void)
 
 }
 
+/**********************************
+ *函数名：void Led_task(void)
+ *函数功能：心跳灯任务
+ *参数:None
+ *返回值:none
+***********************************/
 void Led_task(void)
 {
 	if(g_TIMFlag.bits.LedFlag == 1)

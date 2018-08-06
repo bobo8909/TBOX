@@ -2,7 +2,12 @@
 
 #define DELAY10S 10000
 #define DELAY1S 1000
-#define SEND_DELAYMS 50
+#define SEND_DELAYMS 80
+#define DELAY_POWERON 250
+#define DELAY_POWEROFF 2500
+#define DELAY_POWERRESET 5000
+
+#define ATFAILEDCOUNT 15
 /*global value*/
 STRUCT_TIMFLAG g_TIMFlag = {0};
 STRUCT_N720InitTIMFlag g_N720InitTIMFlag = {0};
@@ -49,8 +54,11 @@ static void TIM6_Init(u16 arr,u16 psc)
 static u16 LEDCount = 0;
 static u8 CANSendCount = 0;
 static u16 N720InitCount = 0;
-u8 gN720InitStep = 0;
+u8 gN720InitStep = 0xFF;
 u8 gN720TCPInitStep = 0;
+u8 CMDFailedCount = 0;//没有收到正确响应时发送AT命令的次数
+u8 ReconnectCount = 0;//重新初始化的次数
+static u16 PowerONOFFCount = 0;
 void TIM6_IRQHandler(void)	 //TIM2中断
 {
 
@@ -102,6 +110,13 @@ void TIM6_IRQHandler(void)	 //TIM2中断
 			{
 				g_N720InitTIMFlag.bits.bN720SendATCommandFlag = 1;
 				N720InitCount = 0;
+			    CMDFailedCount++;
+                if(CMDFailedCount == ATFAILEDCOUNT)
+                {
+                    CMDFailedCount = 0;
+                    N720PowerkeyReset();
+                    gN720InitStep = N720PrepareReset;
+                }
 			}
 		}
 		
@@ -142,6 +157,14 @@ void TIM6_IRQHandler(void)	 //TIM2中断
 			{
 				g_N720InitTIMFlag.bits.bN720SendATCSQCommandFlag = 1;
 				N720InitCount = 0;
+                
+			    CMDFailedCount++;
+                if(CMDFailedCount == 40)
+                {
+                    CMDFailedCount = 0;
+                    N720PowerkeyReset();
+                    gN720InitStep = N720PrepareReset;
+                }
 			}
 		}
         
@@ -152,6 +175,14 @@ void TIM6_IRQHandler(void)	 //TIM2中断
 			{
 				g_N720InitTIMFlag.bits.bN720SendATCREGCommandFlag = 1;
 				N720InitCount = 0;
+
+			    CMDFailedCount++;
+                if(CMDFailedCount == 40)
+                {
+                    CMDFailedCount = 0;
+                    N720PowerkeyReset();
+                    gN720InitStep = N720PrepareReset;
+                }
 			}
 		}
 
@@ -203,6 +234,23 @@ void TIM6_IRQHandler(void)	 //TIM2中断
 			{
 				g_N720TCPInitTIMFlag.bits.bN720SendATXIIC1CommandFlag = 1;
 				N720InitCount = 0;
+
+			    CMDFailedCount++;
+                if(CMDFailedCount == 20)
+                {
+                    ReconnectCount++;
+                    if(ReconnectCount == 3)
+                    {
+                        ReconnectCount = 0;
+                        N720PowerkeyReset();
+                        gN720InitStep = N720PrepareReset;
+                    }
+                    else
+                    {
+                        CMDFailedCount = 0;
+                        gN720InitStep = N720SendAT;
+                    }
+                }
 			}
 		}
 
@@ -257,13 +305,52 @@ void TIM6_IRQHandler(void)	 //TIM2中断
                 g_N720TCPInitTIMFlag.bits.bN720SendATPrepareSendCommandFlag = 0;
              }
         }
+
+        if(g_N720InitTIMFlag.bits.bN720PowerONFlag == 1)
+        {
+            PowerONOFFCount++;
+            if(PowerONOFFCount == DELAY_POWERON)
+            {
+                PowerONOFFCount = 0;
+                g_N720InitTIMFlag.bits.bN720PowerONFlag = 0;
+                N720POWERKEY = N720_OFF;
+                gN720InitStep = N720StartSend;
+            }
+        }
+
+        if(g_N720InitTIMFlag.bits.bN720PowerOFFFlag == 1)
+        {
+            PowerONOFFCount++;
+            if(PowerONOFFCount == DELAY_POWEROFF)
+            {
+                PowerONOFFCount = 0;
+                g_N720InitTIMFlag.bits.bN720PowerOFFFlag = 0;
+                N720POWERKEY = N720_OFF;                
+            }
+        }
+
+        if((g_N720InitTIMFlag.bits.bN720PowerkeyResetFlag == 1) 
+            &&(g_N720InitTIMFlag.bits.bN720PowerOFFFlag == 0))
+        {
+            PowerONOFFCount++;
+            if(PowerONOFFCount == DELAY_POWERRESET)
+            {
+                PowerONOFFCount = 0;
+                g_N720InitTIMFlag.bits.bN720PowerkeyResetFlag = 0;
+                N720PowerON();
+            }
+        }
 #endif
 	}
 }
 
-
+/**********************************
+ *函数名：void TIM_INIT(void)
+ *函数功能：定时器初始化
+ *参数:None
+ *返回值:none
+***********************************/
 void TIM_INIT(void)
 {
-
 	TIM6_Init(999, 71);// 1kHz	
 }

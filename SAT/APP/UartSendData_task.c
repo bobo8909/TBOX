@@ -5,6 +5,15 @@
 
 UARTSENDDATA gUartSendData[USARTSENDBUF] = {0};
 #if 1
+
+/**********************************
+ *函数名：static void SwitchCANData(u8* src ,u8* SendVal,u16 srclen)
+ *函数功能：把16进制数转换成ASCII值
+ *参数:(1)src:转换后的值存放的地址
+        (2)SendVal:准备转换的值
+        (3)srclen:需要转换的数据长度
+ *返回值:none
+***********************************/
 static void SwitchCANData(u8* src ,u8* SendVal,u16 srclen)
 {
 	u16 i;
@@ -88,6 +97,12 @@ static void SwitchCANData(u16* src ,u8* SendVal,u16 srclen)
 }
 
 #endif
+/**********************************
+ *函数名：void ATCommSendCAN(void)
+ *函数功能：处理接收到的CAN原始数据并进行转换
+ *参数:None
+ *返回值:none
+***********************************/
 void ATCommSendCAN(void)
 {
 	u16 i = 0;
@@ -107,12 +122,12 @@ void ATCommSendCAN(void)
 		printf("\r\n");
 		#endif
 		SwitchCANData(gUartSendData[UartRecvCount].UartSendBuf,gCanRxRawDataBuf[CanRxCount].Buf, 
-							USART_SEND_LEN);
+							sizeof(gUartSendData[UartRecvCount].UartSendBuf));
 		
 		memset(gCanRxRawDataBuf + CanRxCount, 0, sizeof(gCanRxRawDataBuf[0]));
 
 		#if 0
-		printf("uartdata:");
+		printf("uartdata:%d;",sizeof(gUartSendData[UartRecvCount].UartSendBuf));
 		for(i = 0; i < USART_SEND_LEN; i++)
 		{
 			printf("%02x ",gUartSendData[CanRxCount].UartSendBuf[i]);
@@ -138,7 +153,12 @@ void ATCommSendCAN(void)
 
 }
 
-
+/**********************************
+ *函数名：void UartSendData_task(void)
+ *函数功能：串口2发送数据任务：此任务是把接收到的CAN数据转换成ASCII值，然后再通过AT指令发送给N720
+ *参数:None
+ *返回值:none
+***********************************/
 void UartSendData_task(void)
 {
 //	u16 i = 0,j = 0;
@@ -157,7 +177,7 @@ void UartSendData_task(void)
 			USART_SendData(USART1,(u16)gUartSendData[UartSendDataCount].UartSendBuf[j]);		
 		}
         #else
-        printf("send data\r\n");
+        //printf("send data\r\n");
 
         if(g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag == 1)
         {

@@ -7,7 +7,12 @@
 
 CanRxMsg CANSendBuf[3] = {0,0,0,0,0,{0},0};
 
-/*CAN数据发送*/
+/**********************************
+ *函数名：void CANsend_task(void)
+ *函数功能：CAN数据发送任务
+ *参数:None
+ *返回值:none
+***********************************/
 void CANsend_task(void)
 {
 	

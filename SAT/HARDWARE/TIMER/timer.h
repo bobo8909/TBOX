@@ -34,7 +34,10 @@ typedef union
 		u8 bN720SendATCREGCommandFlag : 1;
 		u8 bN720SendATCGATTCommandFlag : 1;
 		u8 bN720SendATMYSYSINFOCommandFlag : 1;
-        u8 bnull : 7;
+		u8 bN720PowerONFlag : 1;
+		u8 bN720PowerOFFFlag : 1;        
+        u8 bN720PowerkeyResetFlag : 1;
+        u8 bNull : 4;
 	}bits;
 }STRUCT_N720InitTIMFlag;
 extern STRUCT_N720InitTIMFlag g_N720InitTIMFlag;
@@ -67,6 +70,7 @@ extern STRUCT_N720TCPInitTIMFlag g_N720TCPInitTIMFlag;
 #define N720SendATCREG 0x06
 #define N720SendATCGATT 0x07
 #define N720SendATMYSYSINFO 0x08
+#define N720PrepareReset 0xFD
 #define N720InitFinish 0xFE
 extern u8 gN720InitStep;
 
@@ -85,6 +89,8 @@ extern u8 gN720InitStep;
 #define N720TCPInitFinish 0xFE
 extern u8 gN720TCPInitStep;
 
+extern u8 CMDFailedCount;
+extern u8 ReconnectCount;
 void TIM_INIT(void);
 
 #endif

@@ -25,7 +25,13 @@ __asm void MSR_MSP(u32 addr)
     BX r14
 }
 
-static void System_clock(void)
+/**********************************
+ *函数名：static void RCC_Init(void)
+ *函数功能：初始化系统时钟
+ *参数:None
+ *返回值:none
+***********************************/
+static void RCC_Init(void)
 {
 #if 1
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1 | RCC_APB1Periph_TIM2 | RCC_APB1Periph_TIM3 | RCC_APB1Periph_TIM4 
@@ -42,9 +48,15 @@ static void System_clock(void)
 }
 
 
+/**********************************
+ *函数名：void System_init(void)
+ *函数功能：所有模块的初始化
+ *参数:None
+ *返回值:none
+***********************************/
 void System_init(void)
 {
-	System_clock();
+	RCC_Init();
 	
     delay_init();	    	 //延时函数初始化	  
     
@@ -62,6 +74,10 @@ void System_init(void)
 	LED_Init(); 			 //LED端口初始化
 	
 	IO_init();
+
+    N720IOInit();
+
+	N720PowerON();
     
 	printf("system init finish\r\n");
 }
