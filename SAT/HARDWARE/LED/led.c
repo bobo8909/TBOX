@@ -34,3 +34,19 @@ void Led_task(void)
 		LED0 = LED_OFF;
 	}
 }
+
+void LedTimerHandler(void)
+{
+    static u16 LEDCount = 0;
+    
+    LEDCount++;
+    if(LEDCount == 499)
+    {
+        g_TIMFlag.bits.LedFlag = 1;
+    }
+    else if(LEDCount == 999)
+    {
+        g_TIMFlag.bits.LedFlag = 0;
+        LEDCount = 0;
+    }
+}

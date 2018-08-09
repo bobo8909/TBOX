@@ -105,7 +105,7 @@ static void SwitchCANData(u16* src ,u8* SendVal,u16 srclen)
 ***********************************/
 void ATCommSendCAN(void)
 {
-	u16 i = 0;
+//	u16 i = 0;
 	static u8 CanRxCount = 0;
     static u8 UartRecvCount = 0;
 	if(gCanRxRawDataBuf[CanRxCount].NewDataFlag == 1)

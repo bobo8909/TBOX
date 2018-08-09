@@ -37,3 +37,20 @@ void CANsend_task(void)
 	//CANErrPrintf();
 }
 
+
+void CANSendTimerHandler(void)
+{
+    static u8 CANSendCount = 0;
+
+    if(g_TIMFlag.bits.CANFlag == 0)
+    {
+        CANSendCount++;
+        if(CANSendCount == 100)
+        {
+            CANSendCount = 0;
+            g_TIMFlag.bits.CANFlag = 1;
+            //g_TIMFlag.bits.ATUartSendFlag = 1;
+        }
+    }
+
+}

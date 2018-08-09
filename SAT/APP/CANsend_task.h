@@ -7,5 +7,6 @@
 
 
 void CANsend_task(void);
+void CANSendTimerHandler(void);
 
 #endif

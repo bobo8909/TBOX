@@ -28,6 +28,22 @@
 #include "UartDeal_task.h"
 #include "UartSendData_task.h"
 
+typedef union
+{
+	u8 Byte;
+	struct 
+	{
+		u8 CANFlag : 1;
+		u8 SpeedFlag : 1;
+		u8 LedFlag : 1;
+		u8 ATUartSendFlag : 1;
+		u8 b4 : 1;
+		u8 b5 : 1;
+		u8 b6 : 1;
+		u8 b7 : 1;
+	}bits;
+}STRUCT_TIMFLAG;
+extern STRUCT_TIMFLAG g_TIMFlag;
 
 																    
 	 
@@ -86,6 +102,5 @@ void MSR_MSP(u32 addr);	//…Ë÷√∂—’ªµÿ÷∑
 #endif
 
 
-void System_init(void)
-;
+void System_init(void);
 

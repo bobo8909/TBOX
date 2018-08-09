@@ -8,6 +8,7 @@
 #define LED_OFF 0
 void LED_Init(void);//≥ı ºªØ
 void Led_task(void);
+void LedTimerHandler(void);
 
 		 				    
 #endif
