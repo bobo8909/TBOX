@@ -8,9 +8,14 @@ static u8 *TCPInitCommandBuf[] =
     "AT+TCPCLOSE=1\r",
     "AT+TCPSETUP=1,139.196.56.130,30102\r",
     "AT+TCPACK=1\r",
-    "AT+TCPSEND=1,40\r"
+    "AT+TCPSEND=1,40\r",
+    "AT+XGAUTH=1,1,\"card\",\"card\"\r"
 };
-//static u8 SendData[5][10] = {"1234567890","1111111111","2222222222","3333333333","4444444444"};
+static u8 SendData[5][40] = {"1234567890123456789012345678901234567890",
+                                "1111111111111111111111111111111111111111",
+                                "2222222222222222222222222222222222222222",
+                                "3333333333333333333333333333333333333333",
+                                "4444444444444444444444444444444444444444"};
 
 u8 gN720TCPInitStep = 0;
 STRUCT_N720TCPInitTIMFlag g_N720TCPInitTIMFlag = {0};
@@ -135,7 +140,7 @@ if((g_N720TCPInitTIMFlag.bits.bN720SendATTCPACKCommandFlag == 0) && (gN720TCPIni
 ***********************************/
 void N720_TCPInit(void)
 {
-//    static u8 i = 1;
+    static u8 i = 0;
     if(g_N720TCPInitTIMFlag.bits.bN720SendATCGDCONTCommandFlag == 1)
     {
         printf("send ATCGDCONT\r\n");
@@ -146,7 +151,7 @@ void N720_TCPInit(void)
     if(g_N720TCPInitTIMFlag.bits.bN720SendATXGAUTHCommandFlag == 1)
     {
         printf("send XGAUTH\r\n");
-        USART2_Send_String("AT+XGAUTH=1,1,\"card\",\"card\"\r");
+        USART2_Send_String(TCPInitCommandBuf[COMMAND_ATTCPXGAUTH]);
         g_N720TCPInitTIMFlag.bits.bN720SendATXGAUTHCommandFlag = 0;
     }
     
@@ -193,23 +198,31 @@ void N720_TCPInit(void)
         g_N720TCPInitTIMFlag.bits.bN720SendATTCPACKCommandFlag = 1;
 
     }
-    
+
+    #if 1
     if((gN720TCPInitStep == N720SendTCPSEND) && (g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag == 0))
     {
         printf("send ATTCPSEND\r\n");
         USART2_Send_String(TCPInitCommandBuf[COMMAND_ATTCPSEND]);
         g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 1;
     }
-
+    #endif
     #if 0
     if(g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag == 1)
     {
-        printf("send data\r\n");
-        g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag = 0;
-        USART2_Send_String(SendData[i++]);
         if(i == 5)
-            i = 0;
-        gN720TCPInitStep = N720TCPInitFinish;
+        {
+            //i = 0;
+            //gN720TCPInitStep = 0xFF;
+            return ;
+        }
+        else
+        {
+            g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag = 0;
+            printf("send data\r\n");
+            USART2_Send_String(SendData[i++]);
+            gN720TCPInitStep = N720TCPInitFinish;
+        }
     }
     #endif
 }

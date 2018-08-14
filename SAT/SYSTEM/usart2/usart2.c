@@ -918,6 +918,7 @@ void N720TCPInitRecvData(u8 Res)
                         {
                             if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDTCPSENDDataHeadBuf)-2))
                             {
+                                //printf("AA");
                                 ATCMDHeadCount = 0;
                                 ATRecvStep = 1;
                             }
@@ -932,6 +933,7 @@ void N720TCPInitRecvData(u8 Res)
                         }
                         break;
                     case 1:
+                        //printf("BB");
                         if(ATCMDRNTailBuf[ATCMDTailCount] == Res)
                         {
                             ATRecvStep = 2;
@@ -943,6 +945,7 @@ void N720TCPInitRecvData(u8 Res)
                         
                         break;
                     case 2:                         
+                        //printf("CC");
                         if(ATCMDRNTailBuf[++ATCMDTailCount] == Res)
                         {
                             if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDRNTailBuf)-2))
@@ -1064,10 +1067,25 @@ void USART2_Send_String(u8 *buf)
 	{
 		//printf("11\r\n");
         //USART_SendData(USART1,(u16)buf[Len]);
+#if 1
 		USART_SendData(USART2,(u16)buf[Len]);
 		Len++;
 		if(buf[Len] == '\0')
 			return;
+        #else
+		USART_SendData(USART2,40);
+        #endif
 	}
 }
 
+void USART2_Send_CANData(u8 *buf)
+{
+	u8 Len = 0;
+	while(1)
+	{
+		USART_SendData(USART2,(u16)buf[Len]);
+		Len++;
+		if(Len == USART_SEND_LEN)
+			return;
+	}
+}

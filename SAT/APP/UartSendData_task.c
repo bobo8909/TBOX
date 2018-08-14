@@ -178,14 +178,16 @@ void UartSendData_task(void)
 		}
         #else
         //printf("send data\r\n");
-
+#if 1
         if(g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag == 1)
         {
             //printf("111\r\n");
             g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag = 0;
-            USART2_Send_String(gUartSendData[UartSendDataCount].UartSendBuf);
+            //USART2_Send_String(gUartSendData[UartSendDataCount].UartSendBuf);
+            USART2_Send_CANData(gUartSendData[UartSendDataCount].UartSendBuf);
             gN720TCPInitStep = N720TCPInitFinish;
         }
+#endif
         #endif
 		//printf("\r\n");
 		memset(gUartSendData + UartSendDataCount,0,sizeof(gUartSendData[0]));
