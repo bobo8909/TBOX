@@ -147,6 +147,11 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	{
 		memcpy(gCanRxRawDataBuf[RxMsgCount].Buf,&RxMessage,sizeof(RxMessage));		
 		gCanRxRawDataBuf[RxMsgCount].NewDataFlag = 1;
+
+        if(g_N720TCPInitFlag.bits.bN720SendACKFinishFlag == 1)
+        {
+            gN720TCPInitStep = N720SendTCPSEND;
+        }
 		RxMsgCount++;
 		if(RxMsgCount == RXMSG_LEN)
 		{

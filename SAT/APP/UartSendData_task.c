@@ -110,6 +110,7 @@ void ATCommSendCAN(void)
     static u8 UartRecvCount = 0;
 	if(gCanRxRawDataBuf[CanRxCount].NewDataFlag == 1)
 	{
+	    
 		#if 0
 		printf("can.extid = %x;can.dlc=%x,can.fmi=%x,can.ide=%x,can.rtr=%x,can.stdid=%x\r\n",
 			RxMessage.ExtId,RxMessage.DLC,RxMessage.FMI,RxMessage.IDE,RxMessage.RTR,RxMessage.StdId);
@@ -171,6 +172,7 @@ void UartSendData_task(void)
 	
 	if(gUartSendData[UartSendDataCount].UartSendFlag == 1)
 	{
+	
 	    #if 0
 		for(j = 0; j < USART_SEND_LEN; j++)
 		{
@@ -181,16 +183,16 @@ void UartSendData_task(void)
 #if 1
         if(g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag == 1)
         {
-            //printf("111\r\n");
+            printf("111\r\n");
             g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag = 0;
             //USART2_Send_String(gUartSendData[UartSendDataCount].UartSendBuf);
             USART2_Send_CANData(gUartSendData[UartSendDataCount].UartSendBuf);
             gN720TCPInitStep = N720TCPInitFinish;
+            memset(gUartSendData + UartSendDataCount,0,sizeof(gUartSendData[0]));
         }
 #endif
         #endif
 		//printf("\r\n");
-		memset(gUartSendData + UartSendDataCount,0,sizeof(gUartSendData[0]));
 		//gUartSendData[UartSendDataCount].UartSendFlag = 0;
     }
     

@@ -85,6 +85,8 @@ u8 const ATCMDTCPSETUPHeadBuf[] = {"+TCPSETUP:"};
 u8 const ATCMDTCPACKHeadBuf[] = {"+TCPACK:"};
 u8 const ATCMDTCPSENDHeadBuf[] = {">"};
 u8 const ATCMDTCPSENDDataHeadBuf[] = {"\r\nOK\r\n+TCPSEND:"};
+u8 const ATCMDTCPSENDDataHeadBuf1[] = {"\r\nOK\r\n\r\n+TCPSEND:"};
+
 u8 const ATCMDCGDCONTHeadBuf[] = {"AT+CGDCONT="};
 u8 const ATCMDTailBuf[] = {"\r\nOK\r\n"};
 u8 const ATCMDTCPTailBuf[] = {"\r\r\nOK\r\n"};
@@ -101,6 +103,11 @@ static u8 ATRecvHeadCount = 0;
 static u8 ATRecvTailCount = 0;
 static u8 ATRecvDataCount = 0;
 
+//static u8 ATRecvStatusStep = 0;
+static u8 ATRecvStatusHeadCount = 0;
+//static u8 ATRecvStatusTailCount = 0;
+u8 const ATRecvStatusBuf[] = {"+TCPSEND: 1,OPERATION EXPIRED"};
+u8 const ATRecvStatusBuf1[] = {"+TCPSEND: 1,FAIL"};
 void N720InitRecvData(u8 Res)
 {
 	/*4G模块初始化,接收到发送AT命令后的回复*/
@@ -914,9 +921,11 @@ void N720TCPInitRecvData(u8 Res)
                 switch(ATRecvStep)
                 {
                     case 0:
-                        if(ATCMDTCPSENDDataHeadBuf[ATCMDHeadCount] == Res)
+                        if((ATCMDTCPSENDDataHeadBuf[ATCMDHeadCount] == Res)
+                            ||(ATCMDTCPSENDDataHeadBuf1[ATCMDHeadCount] == Res))
                         {
-                            if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDTCPSENDDataHeadBuf)-2))
+                            if((ATCMDHeadCount == (ATCMDSIZEOF(ATCMDTCPSENDDataHeadBuf)-2))
+                                ||(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDTCPSENDDataHeadBuf1)-2)))
                             {
                                 //printf("AA");
                                 ATCMDHeadCount = 0;
@@ -1044,6 +1053,32 @@ void N720RecvCANData(u8 Res)
 
 }
 
+void N720RecvStatus(u8 Res)
+{
+    if((ATRecvStatusBuf[ATRecvStatusHeadCount] == Res)||(ATRecvStatusBuf1[ATRecvStatusHeadCount] == Res))
+    {
+        if((ATRecvStatusHeadCount == (ATCMDSIZEOF(ATRecvStatusBuf)-2))
+            ||(ATRecvStatusHeadCount == (ATCMDSIZEOF(ATRecvStatusBuf1)-2)))
+        {
+            ATRecvStatusHeadCount = 0;
+            printf("zzz\r\n");
+            
+            gN720TCPInitStep = N720SendTCPCGDCONT;
+            g_N720TCPInitFlag.bits.bN720SendACKFinishFlag = 0;
+            g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 0;
+            //g_N720TCPInitTIMFlag.bits.bN720SendATTCPACKCommandFlag = 0;
+            //g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 0;
+        }
+        else
+        {
+            ATRecvStatusHeadCount++;
+        }
+    }
+    else
+    {
+        ATRecvStatusHeadCount = 0;
+    }       
+}
 
 void USART2_IRQHandler(void)                	//串口1中断服务程序
 {
@@ -1051,10 +1086,10 @@ void USART2_IRQHandler(void)                	//串口1中断服务程序
     if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
     {
     	Res = USART_ReceiveData(USART2);	//读取接收到的数据
-        
         N720RecvCANData(Res);
         N720InitRecvData(Res);
         N720TCPInitRecvData(Res);
+        N720RecvStatus(Res);
     }
 } 
 

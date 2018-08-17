@@ -91,7 +91,7 @@ void UartDeal_task(void)
         N720CSQXValue = atoi(N720CSQX);
         memcpy(N720CSQY, gN720Info.CSQBuf + 4, 2);
         N720CSQYValue = atoi(N720CSQY);
-        memset(gN720Info.CSQBuf,sizeof(gN720Info.CSQBuf)/sizeof(gN720Info.CSQBuf[0]),0);
+        memset(gN720Info.CSQBuf,0,sizeof(gN720Info.CSQBuf)/sizeof(gN720Info.CSQBuf[0]));
         if((N720CSQXValue <= 31) && (N720CSQXValue >= 12))
         {
             gN720InitStep = N720SendATCREG;
@@ -232,8 +232,9 @@ void UartDeal_task(void)
             printf("%c",gN720Info.TCPACK[i]);
         }
         printf("\r\n");
-        gN720TCPInitStep = N720SendTCPSEND;
+        gN720TCPInitStep = N720WaitRecvData;
         g_N720TCPInitFlag.bits.bN720RecvATTCPACKInfoFlag = 0;
+        g_N720TCPInitFlag.bits.bN720SendACKFinishFlag = 1;
     }
 
     if(g_N720TCPInitFlag.bits.bN720RecvATTCPSENDInfoFlag == 1)
@@ -259,7 +260,7 @@ void UartDeal_task(void)
         printf("\r\n");
         g_N720TCPInitFlag.bits.bN720SendATSendDataSuccessCommandFlag = 0;
         
-        gN720TCPInitStep = N720SendTCPSEND;
+        //gN720TCPInitStep = N720SendTCPSEND;
         g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 0;
         //g_N720InitRecvFlag.bits.bN720RecvCANDataFlag  = 0;
     }

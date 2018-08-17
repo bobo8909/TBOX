@@ -38,7 +38,8 @@ static void TIM6_Init(u16 arr,u16 psc)
 
 }
 
-
+static u16 printCount = 0;
+u8 printFlag = 0;
 void TIM6_IRQHandler(void)	 //TIM2中断
 {
 
@@ -46,7 +47,12 @@ void TIM6_IRQHandler(void)	 //TIM2中断
 	{
 		TIM_ClearITPendingBit(TIM6, TIM_IT_Update  );  //清除TIMx更新中断标志
 
-		
+        printCount++;
+		if(printCount == 5000)
+        {
+            printFlag = 1;
+            printCount = 0;
+        }      
 		/*can count*/
         CANSendTimerHandler();
 		/*LED count*/

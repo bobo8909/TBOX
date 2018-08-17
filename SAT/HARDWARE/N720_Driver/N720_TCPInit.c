@@ -107,13 +107,13 @@ if((g_N720TCPInitTIMFlag.bits.bN720SendATXGAUTHCommandFlag == 0) && (gN720TCPIni
         N720TCPInitCount = 0;
     }
 }
-#if 0
+#if 1
 if((g_N720TCPInitTIMFlag.bits.bN720SendATTCPACKCommandFlag == 0) && (gN720TCPInitStep == N720SendTCPACK))
 {
     N720TCPInitCount++;
     if(N720TCPInitCount == DELAY1S)
     {
-        g_N720TCPInitTIMFlag.bits.bN720SendATXGAUTHCommandFlag = 1;
+        g_N720TCPInitTIMFlag.bits.bN720SendATTCPACKCommandFlag = 1;
         N720TCPInitCount = 0;
     }
 }
@@ -191,12 +191,11 @@ void N720_TCPInit(void)
         g_N720TCPInitTIMFlag.bits.bN720SendATTCPACKCommandFlag = 0;
     }
 #endif
-    if((gN720TCPInitStep == N720SendTCPACK) && (g_N720TCPInitTIMFlag.bits.bN720SendATTCPACKCommandFlag == 0))
+    if(g_N720TCPInitTIMFlag.bits.bN720SendATTCPACKCommandFlag == 1)
     {
         printf("send ATTCPACK\r\n");
         USART2_Send_String(TCPInitCommandBuf[COMMAND_ATTCPACK]);
-        g_N720TCPInitTIMFlag.bits.bN720SendATTCPACKCommandFlag = 1;
-
+        g_N720TCPInitTIMFlag.bits.bN720SendATTCPACKCommandFlag = 0;
     }
 
     #if 1

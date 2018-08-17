@@ -23,6 +23,7 @@
 #define N720SendTCPXGAUTH 0x09
 #define N720SendTCPSTARTSEND 0x0A
 #define N720SendDataFinish 0x0B
+#define N720WaitRecvData 0xFD
 #define N720TCPInitFinish 0xFE
 extern u8 gN720TCPInitStep;
 

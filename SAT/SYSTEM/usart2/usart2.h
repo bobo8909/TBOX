@@ -50,7 +50,8 @@ typedef union
         u8 bN720SendATStartSendCommandFlag : 1;
         u8 bN720SendATSendDataSuccessCommandFlag : 1;
         u8 bN720SendATRecvACKCommandFlag : 1;
-		u8 bnull : 2;
+		u8 bN720SendACKFinishFlag : 1;
+        u8 bnull :1;
 	}bits;
 }STRUCT_TCPInitFlag;
 extern STRUCT_TCPInitFlag g_N720TCPInitFlag;

@@ -3,6 +3,7 @@
 #include "sys.h"
 
 
+extern u8 printFlag;
 
 
 

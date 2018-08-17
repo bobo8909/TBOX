@@ -40,6 +40,8 @@ void N720PowerOFF(void)
 {
     N720POWERKEY = N720_ON;
     g_N720InitTIMFlag.bits.bN720PowerOFFFlag = 1;
+    g_N720TCPInitFlag.bits.bN720SendACKFinishFlag = 0;
+    //g_N720TCPInitTIMFlag.bits.bN720SendATTCPACKCommandFlag = 0;
 }
 
 /**********************************
