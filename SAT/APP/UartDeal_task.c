@@ -46,6 +46,7 @@ void UartDeal_task(void)
 		printf("\r\n");
 		
 		gN720InitStep = N720SendATCCID;
+        N720TCPInitCount = 0;
 		g_N720InitRecvFlag.bits.bN720RecvATIInfoFlag = 0;
 	}
 
@@ -59,6 +60,7 @@ void UartDeal_task(void)
 		printf("\r\n");
 			
 		gN720InitStep = N720SendATCPIN;		
+        N720TCPInitCount = 0;
 		g_N720InitRecvFlag.bits.bN720RecvATCCIDInfoFlag = 0;
 	}
 
@@ -75,6 +77,7 @@ void UartDeal_task(void)
 		if(strstr((const char*)gN720Info.CPINBuf,CPINResponeBuf) != NULL)
 		{
 			gN720InitStep = N720SendATCSQ;
+            N720TCPInitCount = 0;
 			g_N720InitRecvFlag.bits.bN720RecvATCPINInfoFlag = 0;
 		}
 	}
@@ -96,6 +99,7 @@ void UartDeal_task(void)
         {
             gN720InitStep = N720SendATCREG;
             CMDFailedCount = 0;
+            N720TCPInitCount = 0;
         }
 		g_N720InitRecvFlag.bits.bN720RecvATCSQInfoFlag = 0;
 	}
@@ -112,6 +116,7 @@ void UartDeal_task(void)
 		{
 		    gN720InitStep = N720SendATCGATT;
             CMDFailedCount = 0;
+            N720TCPInitCount = 0;
         }
 		g_N720InitRecvFlag.bits.bN720RecvATCREGInfoFlag = 0;
 	}
@@ -128,6 +133,7 @@ void UartDeal_task(void)
 		{
 		    gN720InitStep = N720SendATMYSYSINFO;
             CMDFailedCount = 0;
+            N720TCPInitCount = 0;
         }
 		g_N720InitRecvFlag.bits.bN720RecvATCGATTInfoFlag = 0;
 	}
@@ -142,6 +148,7 @@ void UartDeal_task(void)
 		printf("\r\n");
 			
 		gN720InitStep = N720InitFinish;
+        N720TCPInitCount = 0;
         gN720TCPInitStep = N720SendTCPCGDCONT;
 		g_N720InitRecvFlag.bits.bN720RecvATMYSYSINFOInfoFlag = 0;
 		g_N720InitRecvFlag.bits.bN720InitFinish = 1;
@@ -156,6 +163,7 @@ void UartDeal_task(void)
 		//}
 		//printf("\r\n");
 		gN720TCPInitStep = N720SendTCPXGAUTH;
+        N720TCPInitCount = 0;
 		g_N720TCPInitFlag.bits.bN720RecvATCGDCONTInfoFlag = 0;
 	}
 
@@ -164,6 +172,7 @@ void UartDeal_task(void)
         printf("recv XGUATH ok\r\n");
         
 		gN720TCPInitStep = N720SendTCPXIIC;
+        N720TCPInitCount = 0;
         g_N720TCPInitFlag.bits.bN720RecvATTCPXGAUTHInfoFlag = 0;
     }
     
@@ -171,6 +180,7 @@ void UartDeal_task(void)
 	{
 	    printf("recv xiic\r\n");
 		gN720TCPInitStep = N720SendTCPXIIC1;
+        N720TCPInitCount = 0;
 		g_N720TCPInitFlag.bits.bN720RecvATXIICInfoFlag = 0;
         
         CMDFailedCount = 0;
@@ -188,6 +198,7 @@ void UartDeal_task(void)
         if((gN720Info.TCPXIIC[0] != '0') &&(gN720Info.TCPXIIC[2] != '0'))
 		{
 		    gN720TCPInitStep = N720SendTCPCLOSE;
+            N720TCPInitCount = 0;
         }
 		g_N720TCPInitFlag.bits.bN720RecvATXIIC1InfoFlag = 0;
 	}
@@ -201,6 +212,7 @@ void UartDeal_task(void)
 		}
 		printf("\r\n");
 		gN720TCPInitStep = N720SendTCPSETUP;
+        N720TCPInitCount = 0;
 		g_N720TCPInitFlag.bits.bN720RecvATTCPCLOSEInfoFlag = 0;
 	}
 
@@ -209,6 +221,7 @@ void UartDeal_task(void)
 	    printf("TCPSETUP OK\r\n");
 
 		gN720TCPInitStep = N720SendTCPSETUPING;
+        N720TCPInitCount = 0;
 		g_N720TCPInitFlag.bits.bN720RecvATTCPSETUPInfoFlag = 0;
 	}    
 
@@ -221,6 +234,7 @@ void UartDeal_task(void)
 		}
 		printf("\r\n");
 		gN720TCPInitStep = N720SendTCPACK;
+        N720TCPInitCount = 0;
 		g_N720TCPInitFlag.bits.bN720RecvATTCPSETUPINGInfoFlag = 0;
 	}    
 
@@ -233,6 +247,7 @@ void UartDeal_task(void)
         }
         printf("\r\n");
         gN720TCPInitStep = N720WaitRecvData;
+        N720TCPInitCount = 0;
         g_N720TCPInitFlag.bits.bN720RecvATTCPACKInfoFlag = 0;
         g_N720TCPInitFlag.bits.bN720SendACKFinishFlag = 1;
     }

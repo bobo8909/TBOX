@@ -11,11 +11,11 @@ static u8 *TCPInitCommandBuf[] =
     "AT+TCPSEND=1,40\r",
     "AT+XGAUTH=1,1,\"card\",\"card\"\r"
 };
-static u8 SendData[5][40] = {"1234567890123456789012345678901234567890",
-                                "1111111111111111111111111111111111111111",
-                                "2222222222222222222222222222222222222222",
-                                "3333333333333333333333333333333333333333",
-                                "4444444444444444444444444444444444444444"};
+//static u8 SendData[5][40] = {"1234567890123456789012345678901234567890",
+//                                "1111111111111111111111111111111111111111",
+//                                "2222222222222222222222222222222222222222",
+//                                "3333333333333333333333333333333333333333",
+//                                "4444444444444444444444444444444444444444"};
 
 u8 gN720TCPInitStep = 0;
 STRUCT_N720TCPInitTIMFlag g_N720TCPInitTIMFlag = {0};
@@ -26,9 +26,9 @@ STRUCT_N720TCPInitTIMFlag g_N720TCPInitTIMFlag = {0};
 *参数:None
 *返回值:none
 ***********************************/
+u16 N720TCPInitCount = 0;
 void N720TCPInitTimerHandler(void)
 {
-    static u16 N720TCPInitCount = 0;
     
     if((g_N720TCPInitTIMFlag.bits.bN720SendATCGDCONTCommandFlag == 0) && (gN720TCPInitStep == N720SendTCPCGDCONT))
     {
@@ -93,9 +93,34 @@ void N720TCPInitTimerHandler(void)
         N720TCPInitCount++;
         if(N720TCPInitCount == DELAY1S)
         {
+        
             g_N720TCPInitTIMFlag.bits.bN720SendATTCPSETUPCommandFlag = 1;
             N720TCPInitCount = 0;
+
         }
+    }
+
+    if(gN720TCPInitStep == N720SendTCPSETUPING)
+    {
+        N720TCPInitCount++;
+        if(N720TCPInitCount == DELAY30S)
+        {
+            N720TCPInitCount = 0;
+            CMDFailedCount++;
+            if(CMDFailedCount == 3)
+            {
+                CMDFailedCount = 0;
+                N720PowerkeyReset();
+                gN720InitStep = N720PrepareReset;
+            }
+            else
+            {
+                gN720TCPInitStep = N720SendTCPSETUP;
+                g_N720TCPInitTIMFlag.bits.bN720SendATTCPSETUPCommandFlag = 0;
+            }
+            
+        }
+
     }
 #endif
 if((g_N720TCPInitTIMFlag.bits.bN720SendATXGAUTHCommandFlag == 0) && (gN720TCPInitStep == N720SendTCPXGAUTH))
@@ -140,7 +165,7 @@ if((g_N720TCPInitTIMFlag.bits.bN720SendATTCPACKCommandFlag == 0) && (gN720TCPIni
 ***********************************/
 void N720_TCPInit(void)
 {
-    static u8 i = 0;
+//    static u8 i = 0;
     if(g_N720TCPInitTIMFlag.bits.bN720SendATCGDCONTCommandFlag == 1)
     {
         printf("send ATCGDCONT\r\n");

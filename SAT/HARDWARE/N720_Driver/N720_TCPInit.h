@@ -45,6 +45,7 @@ typedef union
 	}bits;
 }STRUCT_N720TCPInitTIMFlag;
 extern STRUCT_N720TCPInitTIMFlag g_N720TCPInitTIMFlag;
+extern u16 N720TCPInitCount;
 
 void N720_TCPInit(void);
 void N720TCPInitTimerHandler(void);
