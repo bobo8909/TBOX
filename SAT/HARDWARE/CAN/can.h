@@ -232,7 +232,9 @@ extern STRUCT_EBS_1 g_EBS1RecvVal;
 extern CANRXBUF CANRecvEBSBuf ;
 extern CANRXBUF CANRecvDataBuf[3] ;
 
-#define RXMSG_LEN 10
+#define CAN_INDEX0 0
+#define CAN_INDEX1 1
+#define RXMSG_LEN 2
 extern CanRxMsg RxMessage;
 extern CANRXRAWDATA gCanRxRawDataBuf[RXMSG_LEN];
 
@@ -246,7 +248,8 @@ extern CANRXRAWDATA gCanRxRawDataBuf[RXMSG_LEN];
 #define CANID_EBS_1				(0x0CF6F1EA)//制动控制器反馈报文
 
 
-
+#define CANID_BMS_1         0x1818A8B1
+#define CANID_BMS_7         0x161066B7
 
 //CAN接收RX0中断使能
 #define CAN_RX0_INT_ENABLE	1		//0,不使能;1,使能.								    

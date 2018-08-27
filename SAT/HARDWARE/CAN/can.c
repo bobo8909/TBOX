@@ -90,10 +90,10 @@ u8 CanModeInit(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 	CAN_FilterInitStructure.CAN_FilterNumber = 0;	  //过滤器0
    	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;//CAN_FilterMode_IdMask; 
   	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
-  	CAN_FilterInitStructure.CAN_FilterIdHigh = (((u32)CANID_VCU_2 << 3) >> 16) & 0xFFFF;
-  	CAN_FilterInitStructure.CAN_FilterIdLow = (((u32)CANID_VCU_2 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;
-  	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (((u32)CANID_VCU_3 << 3) >> 16) & 0xFFFF;
-  	CAN_FilterInitStructure.CAN_FilterMaskIdLow = (((u32)CANID_VCU_3 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;;
+  	CAN_FilterInitStructure.CAN_FilterIdHigh = (((u32)CANID_BMS_1 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterIdLow = (((u32)CANID_BMS_1 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (((u32)CANID_BMS_7 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdLow = (((u32)CANID_BMS_7 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;;
   	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_Filter_FIFO0;//过滤器0关联到FIFO0
 	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE; //激活过滤器0
   	CAN_FilterInit(&CAN_FilterInitStructure);//滤波器初始化
@@ -137,28 +137,28 @@ u8 CanModeInit(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 
 CanRxMsg RxMessage;
 CANRXRAWDATA gCanRxRawDataBuf[RXMSG_LEN]={0};
-static u8 RxMsgCount = 0;
+//static u8 RxMsgCount = 0;
 //中断服务函数			    
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
   	CAN_Receive(CAN1, 0, &RxMessage);
-	
-	if(RxMessage.ExtId == CANID_VCU_2)
-	{
-		memcpy(gCanRxRawDataBuf[RxMsgCount].Buf,&RxMessage,sizeof(RxMessage));		
-		gCanRxRawDataBuf[RxMsgCount].NewDataFlag = 1;
 
-        if(g_N720TCPInitFlag.bits.bN720SendACKFinishFlag == 1)
-        {
-            gN720TCPInitStep = N720SendTCPSEND;
-        }
-		RxMsgCount++;
-		if(RxMsgCount == RXMSG_LEN)
-		{
-			RxMsgCount = 0;
-		}
-	}
+    
+	if(RxMessage.ExtId == CANID_BMS_1)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX0].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX0].NewDataFlag = 1;
+
+    }
+
+    
+	if(RxMessage.ExtId == CANID_BMS_7)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX1].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX1].NewDataFlag = 1;
+    }
 }
+
 #endif
 
 //can发送一组数据

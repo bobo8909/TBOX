@@ -1,3 +1,8 @@
+/*
+*发送数据的思路：理论上同一时间可能接收到多个ID发送过来的CAN数据，但是不能同时处理，
+                因此需要在发送完一帧数据后（收到4G模块回复的发送成功），再接着发送下一帧
+*
+*/
 #include "UartSendData_task.h"
 
 #define USARTSENDBUF 10
@@ -105,12 +110,27 @@ static void SwitchCANData(u16* src ,u8* SendVal,u16 srclen)
 ***********************************/
 void ATCommSendCAN(void)
 {
-//	u16 i = 0;
+	u16 i = 0;
 	static u8 CanRxCount = 0;
     static u8 UartRecvCount = 0;
-	if(gCanRxRawDataBuf[CanRxCount].NewDataFlag == 1)
+    static u8 SendFlag = 0;
+
+    if(g_N720TCPInitFlag.bits.bN720SendFinishFlag == 1)
+    {
+        g_N720TCPInitFlag.bits.bN720SendFinishFlag = 0;
+        SendFlag = 0;
+        memset(gCanRxRawDataBuf + CanRxCount, 0, sizeof(gCanRxRawDataBuf[0]));
+        
+        CanRxCount++;
+        if(CanRxCount == RXMSG_LEN)
+        {
+            CanRxCount = 0;
+        }
+    }
+    #if 1
+	if((gCanRxRawDataBuf[CanRxCount].NewDataFlag == 1) && (SendFlag == 0))
 	{
-	    
+	    SendFlag = 1;
 		#if 0
 		printf("can.extid = %x;can.dlc=%x,can.fmi=%x,can.ide=%x,can.rtr=%x,can.stdid=%x\r\n",
 			RxMessage.ExtId,RxMessage.DLC,RxMessage.FMI,RxMessage.IDE,RxMessage.RTR,RxMessage.StdId);
@@ -122,10 +142,13 @@ void ATCommSendCAN(void)
 		}
 		printf("\r\n");
 		#endif
+        
+        gN720TCPInitStep = N720SendTCPSEND;
+        
 		SwitchCANData(gUartSendData[UartRecvCount].UartSendBuf,gCanRxRawDataBuf[CanRxCount].Buf, 
 							sizeof(gUartSendData[UartRecvCount].UartSendBuf));
 		
-		memset(gCanRxRawDataBuf + CanRxCount, 0, sizeof(gCanRxRawDataBuf[0]));
+//		memset(gCanRxRawDataBuf + CanRxCount, 0, sizeof(gCanRxRawDataBuf[0]));
 
 		#if 0
 		printf("uartdata:%d;",sizeof(gUartSendData[UartRecvCount].UartSendBuf));
@@ -146,12 +169,7 @@ void ATCommSendCAN(void)
         
 	}
     
-    CanRxCount++;
-    if(CanRxCount == RXMSG_LEN)
-    {
-        CanRxCount = 0;
-    }
-
+    #endif
 }
 
 /**********************************

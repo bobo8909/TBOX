@@ -277,6 +277,8 @@ void UartDeal_task(void)
         
         //gN720TCPInitStep = N720SendTCPSEND;
         g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 0;
+        
+        g_N720TCPInitFlag.bits.bN720SendFinishFlag = 1;
         //g_N720InitRecvFlag.bits.bN720RecvCANDataFlag  = 0;
     }
 #if 0
