@@ -1120,7 +1120,7 @@ void USART2_Send_CANData(u8 *buf)
 	{
 		USART_SendData(USART2,(u16)buf[Len]);
 		Len++;
-		if(Len == USART_SEND_LEN)
+		if(Len == SEND_DATA_LEN)
 			return;
 	}
 }

@@ -281,11 +281,11 @@ void UartDeal_task(void)
         g_N720TCPInitFlag.bits.bN720SendFinishFlag = 1;
         //g_N720InitRecvFlag.bits.bN720RecvCANDataFlag  = 0;
     }
-#if 0
+#if 1
     if( g_N720InitRecvFlag.bits.bN720RecvCANDataFlag == 1)
     {
         g_N720InitRecvFlag.bits.bN720RecvCANDataFlag = 0;
-    #if 0
+    #if 1
         printf("recv data\r\n");
         for(i = 0;i < sizeof(gN720Info.TCPRecvCANData);i++)
         {

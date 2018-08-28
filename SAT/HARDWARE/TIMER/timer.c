@@ -1,6 +1,6 @@
 #include "timer.h"
 
-
+#define DATA_SEND_DELAY 5000
 
 /**
   * @brief  初始化TIM6定时器，
@@ -38,8 +38,8 @@ static void TIM6_Init(u16 arr,u16 psc)
 
 }
 
-static u16 printCount = 0;
-u8 printFlag = 0;
+static u16 DataSendCount = 0;
+u8 DataSendFlag = 0;
 void TIM6_IRQHandler(void)	 //TIM2中断
 {
 
@@ -47,11 +47,11 @@ void TIM6_IRQHandler(void)	 //TIM2中断
 	{
 		TIM_ClearITPendingBit(TIM6, TIM_IT_Update  );  //清除TIMx更新中断标志
 
-        printCount++;
-		if(printCount == 5000)
+        DataSendCount++;
+		if(DataSendCount == DATA_SEND_DELAY)
         {
-            printFlag = 1;
-            printCount = 0;
+            DataSendFlag = 1;
+            DataSendCount = 0;
         }      
 		/*can count*/
         CANSendTimerHandler();
@@ -75,5 +75,5 @@ void TIM6_IRQHandler(void)	 //TIM2中断
 ***********************************/
 void TIM_INIT(void)
 {
-	TIM6_Init(999, 71);// 1kHz	
+	TIM6_Init(999, 71);// 1kHz	1ms
 }

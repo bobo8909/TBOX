@@ -28,13 +28,6 @@ int main(void)
 		/*CAN·¢ËÍÊý¾Ý*/
 		CANsend_task();
 #endif
-
-    if(printFlag == 1)
-        {
-        printFlag = 0;
-        
-        printf("gN720TCPInitStep:0x%x\r\n",gN720TCPInitStep);
-    }
     }
 }
 

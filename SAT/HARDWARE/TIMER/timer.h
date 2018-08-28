@@ -3,15 +3,7 @@
 #include "sys.h"
 
 
-extern u8 printFlag;
-
-
-
-
-
-
-
-
+extern u8 DataSendFlag;
 
 void TIM_INIT(void);
 

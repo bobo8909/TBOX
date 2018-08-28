@@ -70,7 +70,7 @@ typedef struct
     u8 TCPCGDCONT[20];
     u8 TCPACK[15];
     u8 TCPFinish[10];
-    u8 TCPRecvCANData[46];//链路编号(2byte)+','(1byte)+接收的数据长度40(2byte)+','(1byte)+数据(40byte) = 46
+    u8 TCPRecvCANData[86];//链路编号(2byte)+','(1byte)+接收的数据长度40(2byte)+','(1byte)+数据(40byte) = 46
 }STRUCT_N720_INFO;
 extern STRUCT_N720_INFO gN720Info;
 

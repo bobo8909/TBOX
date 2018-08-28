@@ -250,7 +250,7 @@ extern CANRXRAWDATA gCanRxRawDataBuf[RXMSG_LEN];
 
 #define CANID_BMS_1         0x1818A8B1
 #define CANID_BMS_7         0x161066B7
-
+#define CANID_SUM 2
 //CAN接收RX0中断使能
 #define CAN_RX0_INT_ENABLE	1		//0,不使能;1,使能.								    
 										 							 				    

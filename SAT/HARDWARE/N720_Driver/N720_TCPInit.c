@@ -10,7 +10,7 @@ static u8 *TCPInitCommandBuf[] =
     "AT+TCPCLOSE=1\r",
     "AT+TCPSETUP=1,139.196.56.130,30102\r",
     "AT+TCPACK=1\r",
-    "AT+TCPSEND=1,40\r",
+    "AT+TCPSEND=1,80\r",
     "AT+XGAUTH=1,1,\"card\",\"card\"\r"//¡™Õ®ø®∫≈∫Õ√‹¬Î
 //    "AT+XGAUTH=1,1,\"gsm\",\"1234\"\r"//“∆∂Øø®∫≈∫Õ√‹¬Î
 };
@@ -96,9 +96,26 @@ void N720TCPInitTimerHandler(void)
         N720TCPInitCount++;
         if(N720TCPInitCount == DELAY1S)
         {
-        
+            
             g_N720TCPInitTIMFlag.bits.bN720SendATTCPSETUPCommandFlag = 1;
             N720TCPInitCount = 0;
+
+            CMDFailedCount++;
+            if(CMDFailedCount == 20)
+            {
+                ReconnectCount++;
+                if(ReconnectCount == 3)
+                {
+                    ReconnectCount = 0;
+                    N720PowerkeyReset();
+                    gN720InitStep = N720PrepareReset;
+                }
+                else
+                {
+                    CMDFailedCount = 0;
+                    gN720InitStep = N720SendAT;
+                }
+            }
 
         }
     }
@@ -230,6 +247,7 @@ void N720_TCPInit(void)
     if((gN720TCPInitStep == N720SendTCPSEND) && (g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag == 0))
     {
         printf("send ATTCPSEND\r\n");
+        
         USART2_Send_String(TCPInitCommandBuf[COMMAND_ATTCPSEND]);
         g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 1;
     }
