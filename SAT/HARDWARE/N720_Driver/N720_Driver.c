@@ -222,8 +222,9 @@ void N720PowerTimerHandler(void)
             g_N720InitTIMFlag.bits.bN720PowerONFlag = 0;
             N720POWERKEY = N720_OFF;
             gN720InitStep = N720StartSend;
-            gN720TCPInitStep = N720TCPStartSend
+            gN720TCPInitStep = N720TCPStartSend;
             g_N720InitRecvFlag.bits.bN720InitFinish = 0;
+            printf("N720 POWERON\r\n");
         }
     }
 
