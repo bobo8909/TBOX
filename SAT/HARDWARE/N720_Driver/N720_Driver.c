@@ -28,6 +28,8 @@ void N720PowerON(void)
 {
     N720POWERKEY = N720_ON;
     g_N720InitTIMFlag.bits.bN720PowerONFlag = 1;
+
+    printf("N720 Power ON\r\n");
 }
 
 /**********************************
@@ -39,10 +41,20 @@ void N720PowerON(void)
 void N720PowerOFF(void)
 {
     N720POWERKEY = N720_ON;
+    gN720InitStep = 0xFF;
+    gN720TCPInitStep = 0;
+    g_N720TCPInitFlag.Byte = 0x00;
+    g_N720InitTIMFlag.Byte = 0x00;
+    g_N720TCPInitTIMFlag.Byte = 0x00;
+    g_N720InitRecvFlag.Byte = 0x00;
+    
     g_N720InitTIMFlag.bits.bN720PowerOFFFlag = 1;
-    g_N720TCPInitFlag.bits.bN720SendACKFinishFlag = 0;
+    //g_N720TCPInitFlag.bits.bN720SendACKFinishFlag = 0;
     //g_N720TCPInitTIMFlag.bits.bN720SendATTCPACKCommandFlag = 0;
+    
+    printf("N720 Poweroff\r\n");
 }
+
 
 /**********************************
 *函数名：void N720PowerkeyReset(void)
@@ -53,7 +65,9 @@ void N720PowerOFF(void)
 void N720PowerkeyReset(void)
 {
     N720PowerOFF();
-    g_N720InitTIMFlag.bits.bN720PowerkeyResetFlag = 1;    
+    g_N720InitTIMFlag.bits.bN720PowerkeyResetFlag = 1;   
+
+    printf("N720 Power Reset\r\n");
 }
 /**********************************
 *函数名：void N720IOInit(void)
@@ -224,7 +238,6 @@ void N720PowerTimerHandler(void)
             gN720InitStep = N720StartSend;
             gN720TCPInitStep = N720TCPStartSend;
             g_N720InitRecvFlag.bits.bN720InitFinish = 0;
-            printf("N720 POWERON\r\n");
         }
     }
 

@@ -44,6 +44,7 @@ void MemManage_Handler(void)
   /* Go to infinite loop when Memory Manage exception occurs */
   while (1)
   {
+    printf("MemManage_Handler\r\n");
   }
 }
 
@@ -53,6 +54,7 @@ void BusFault_Handler(void)
   /* Go to infinite loop when Bus Fault exception occurs */
   while (1)
   {
+      printf("BusFault_Handler\r\n");
   }
 }
  
@@ -61,6 +63,7 @@ void UsageFault_Handler(void)
   /* Go to infinite loop when Usage Fault exception occurs */
   while (1)
   {
+    printf("UsageFault_Handler\r\n");
   }
 }
  

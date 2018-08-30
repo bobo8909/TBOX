@@ -23,6 +23,7 @@ int GetKey (void)  {
 	  
 UARTData gUARTData[USART_REC_BUF] = {{0},0};	  
   
+u8 gTCPRecvCANData[647] = {0};
 void uart2_init(u32 bound)
 {
   //GPIO∂Àø⁄…Ë÷√
@@ -101,7 +102,7 @@ STRUCT_N720_INFO gN720Info = {0};
 static u8 ATRecvDataStep = 0;
 static u8 ATRecvHeadCount = 0;
 static u8 ATRecvTailCount = 0;
-static u8 ATRecvDataCount = 0;
+static u16 ATRecvDataCount = 0;
 
 //static u8 ATRecvStatusStep = 0;
 static u8 ATRecvStatusHeadCount = 0;
@@ -1016,7 +1017,8 @@ void N720RecvCANData(u8 Res)
             }
             else
             {
-                gN720Info.TCPRecvCANData[ATRecvDataCount++] = Res;
+                //gN720Info.TCPRecvCANData[ATRecvDataCount++] = Res;
+                gTCPRecvCANData[ATRecvDataCount++] =Res;
 //                          printf("%2x",Res);
             }
             
@@ -1115,9 +1117,10 @@ void USART2_Send_String(u8 *buf)
 
 void USART2_Send_CANData(u8 *buf)
 {
-	u8 Len = 0;
+	u16 Len = 0;
 	while(1)
 	{
+	    IWDG_Feed();
 		USART_SendData(USART2,(u16)buf[Len]);
 		Len++;
 		if(Len == SEND_DATA_LEN)

@@ -2,17 +2,18 @@
 
 static u8 *TCPInitCommandBuf[] =
 {
-    "AT+CGDCONT=1,\"IP\",\"UNINET\"\r",//联通
-    //"AT+CGDCONT=1,\"IP\",\"CTLET\"\r",//电信
-//    "AT+CGDCONT=1,\"IP\",\"CMNET\"\r",//移动
+    "AT+CGDCONT=1,\"IP\",\"CMNET\"\r",//移动APN
     "AT+XIIC=1\r",
     "AT+XIIC?\r",
     "AT+TCPCLOSE=1\r",
     "AT+TCPSETUP=1,139.196.56.130,30102\r",
+    //"AT+TCPSETUP=1,119.23.211.206,8080\r",
     "AT+TCPACK=1\r",
-    "AT+TCPSEND=1,80\r",
-    "AT+XGAUTH=1,1,\"card\",\"card\"\r"//联通卡号和密码
-//    "AT+XGAUTH=1,1,\"gsm\",\"1234\"\r"//移动卡号和密码
+    "AT+TCPSEND=1,640\r",
+    "AT+XGAUTH=1,1,\"gsm\",\"1234\"\r",//移动卡号和密码
+    "AT+CGDCONT=1,\"IP\",\"UNINET\"\r",//联通APN
+    "AT+CGDCONT=1,\"IP\",\"ctm2c\"\r",//电信APN
+    "AT+XGAUTH=1,1,\"m2m\",\"vnet.mobi\"\r"//电信，联通卡号和密码
 };
 //static u8 SendData[5][40] = {"1234567890123456789012345678901234567890",
 //                                "1111111111111111111111111111111111111111",
@@ -189,14 +190,33 @@ void N720_TCPInit(void)
     if(g_N720TCPInitTIMFlag.bits.bN720SendATCGDCONTCommandFlag == 1)
     {
         printf("send ATCGDCONT\r\n");
-        USART2_Send_String(TCPInitCommandBuf[COMMAND_ATCGDCONT]);
+        if(SimType == CMCC)
+        {
+            USART2_Send_String(TCPInitCommandBuf[COMMAND_ATCGDCONT]);
+        }
+        else if(SimType == CUCC)
+        {
+            USART2_Send_String(TCPInitCommandBuf[COMMAND_ATCGDCONTCUCC]);
+        }
+        else if(SimType == CTCC)
+        {
+            USART2_Send_String(TCPInitCommandBuf[COMMAND_ATCGDCONTCTCC]);
+        }
+        
         g_N720TCPInitTIMFlag.bits.bN720SendATCGDCONTCommandFlag = 0;
     }
 
     if(g_N720TCPInitTIMFlag.bits.bN720SendATXGAUTHCommandFlag == 1)
     {
         printf("send XGAUTH\r\n");
-        USART2_Send_String(TCPInitCommandBuf[COMMAND_ATTCPXGAUTH]);
+        if(SimType == CMCC)
+        {
+            USART2_Send_String(TCPInitCommandBuf[COMMAND_ATTCPXGAUTH]);
+        }
+        else if((SimType == CTCC) || (SimType == CUCC))
+        {
+            USART2_Send_String(TCPInitCommandBuf[COMMAND_ATTCPXGAUTHCUCC_CTCC]);
+        }
         g_N720TCPInitTIMFlag.bits.bN720SendATXGAUTHCommandFlag = 0;
     }
     

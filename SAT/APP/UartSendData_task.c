@@ -123,7 +123,11 @@ void ATCommSendCAN(void)
         
 		gCanRxRawDataBuf[CanRxCount].NewDataFlag = 0;
 	}
-    
+    CanRxCount++;
+    if(CanRxCount == CANID_SUM)
+    {
+        CanRxCount = 0;
+    }
 }
 
 /**********************************
@@ -142,7 +146,7 @@ void UartSendData_task(void)
 		//g_TIMFlag.bits.ATUartSendFlag = 0;
 	}
 	
-	if((DataSendFlag == 1) && (g_N720TCPInitFlag.bits.bN720SendACKFinishFlag == 1))
+	if(DataSendFlag == 1)
 	{
 	    DataSendFlag = 0;
         gN720TCPInitStep = N720SendTCPSEND;

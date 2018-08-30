@@ -47,12 +47,19 @@ void TIM6_IRQHandler(void)	 //TIM2中断
 	{
 		TIM_ClearITPendingBit(TIM6, TIM_IT_Update  );  //清除TIMx更新中断标志
 
-        DataSendCount++;
-		if(DataSendCount == DATA_SEND_DELAY)
+        if(g_N720TCPInitFlag.bits.bN720SendACKFinishFlag == 1)
         {
-            DataSendFlag = 1;
+            DataSendCount++;
+    		if(DataSendCount == DATA_SEND_DELAY)
+            {
+                DataSendFlag = 1;
+                DataSendCount = 0;
+            }  
+        }
+        else
+        {
             DataSendCount = 0;
-        }      
+        }
 		/*can count*/
         CANSendTimerHandler();
 		/*LED count*/

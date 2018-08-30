@@ -234,23 +234,46 @@ extern CANRXBUF CANRecvDataBuf[3] ;
 
 #define CAN_INDEX0 0
 #define CAN_INDEX1 1
-#define RXMSG_LEN 2
+#define CAN_INDEX2 2
+#define CAN_INDEX3 3
+#define CAN_INDEX4 4
+#define CAN_INDEX5 5
+#define CAN_INDEX6 6
+#define CAN_INDEX7 7
+#define CAN_INDEX8 8
+#define CAN_INDEX9 9
+#define CAN_INDEX10 10
+#define CAN_INDEX11 11
+#define CAN_INDEX12 12
+#define CAN_INDEX13 13
+#define CAN_INDEX14 14
+#define CAN_INDEX15 15
+
+#define RXMSG_LEN 16
 extern CanRxMsg RxMessage;
 extern CANRXRAWDATA gCanRxRawDataBuf[RXMSG_LEN];
 
+#define CANID_VCU_1         0x0CF6F0EA
+#define CANID_VCU_2 		0x18F122D1 //动力模块
+#define CANID_VCU_3			0x18F133D1 //转向模块
+#define CANID_VCU_5			0x18F144D1 //灯光喇叭
 
-#define CANID_VCU_2 			(0x18F122D1) //动力模块
-#define CANID_VCU_3				(0x18F133D1) //转向模块
-#define CANID_VCU_5				(0x18F144D1) //灯光喇叭
+#define CANID_BCM_1				0x18DC11F7 //获取驾驶状态CANID
+#define CANID_BCM_2             0x18DC22F7
+#define CANID_BCM_3             0x18DC33F7
 
-#define CANID_BCM_1				(0x18DC11F7) //获取驾驶状态CANID
-
-#define CANID_EBS_1				(0x0CF6F1EA)//制动控制器反馈报文
-
+#define CANID_EBS_1				0x0CF6F1EA//制动控制器反馈报文
 
 #define CANID_BMS_1         0x1818A8B1
+#define CANID_BMS_2         0x1610A801
+#define CANID_BMS_3         0x1610A901
+#define CANID_BMS_4         0x1610B701
+#define CANID_BMS_5         0x1818A8A2
+#define CANID_BMS_6         0x1818A8A3
 #define CANID_BMS_7         0x161066B7
-#define CANID_SUM 2
+#define CANID_BMS_8         0x1818A8C1
+
+#define CANID_SUM 16
 //CAN接收RX0中断使能
 #define CAN_RX0_INT_ENABLE	1		//0,不使能;1,使能.								    
 										 							 				    

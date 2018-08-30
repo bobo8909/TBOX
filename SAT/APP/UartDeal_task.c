@@ -1,6 +1,23 @@
 #include "UartDeal_task.h"
 
 const char CPINResponeBuf[] = {"READY"};
+const char TCPACKBuf[] = {"1,OK"};
+
+const char ICCIDCMCC[] = {"898600"};//移动
+const char ICCIDCMCC1[] = {"898602"};//移动
+const char ICCIDCMCC2[] = {"898604"};//移动
+const char ICCIDCMCC3[] = {"898607"};//移动
+
+const char ICCIDCUCC[] = {"898601"};//联通
+const char ICCIDCUCC1[] = {"898606"};//联通
+const char ICCIDCUCC2[] = {"898609"};//联通
+
+const char ICCIDCTCC[] = {"898603"};//电信
+const char ICCIDCTCC1[] = {"898611"};//电信
+
+
+
+SIMCARDTYPE SimType = CMCC;
 
 /**********************************
  *函数名：void UartDeal_task(void)
@@ -10,10 +27,12 @@ const char CPINResponeBuf[] = {"READY"};
 ***********************************/
 void UartDeal_task(void)
 {
-	u8 i = 0;
+	u16 i = 0;
     
     char N720CSQX[2] = {0},N720CSQY[2] = {0};
     u8 N720CSQXValue = 0,N720CSQYValue = 0;
+
+    static u8 TCPSetupCount = 0;
 #if 0
 	static u8 UartDealIndex = 0;
 
@@ -58,7 +77,29 @@ void UartDeal_task(void)
 			printf("%c",gN720Info.CCIDBuf[i]);
 		}
 		printf("\r\n");
-			
+
+        if((strstr((const char*)gN720Info.CCIDBuf,ICCIDCMCC) != NULL)
+            ||(strstr((const char*)gN720Info.CCIDBuf,ICCIDCMCC1) != NULL)
+            ||(strstr((const char*)gN720Info.CCIDBuf,ICCIDCMCC2) != NULL)
+            ||(strstr((const char*)gN720Info.CCIDBuf,ICCIDCMCC3) != NULL))
+        {
+            SimType = CMCC;
+            printf("CMCC\r\n");
+        }
+        else if((strstr((const char*)gN720Info.CCIDBuf,ICCIDCUCC) != NULL)
+            ||(strstr((const char*)gN720Info.CCIDBuf,ICCIDCUCC1) != NULL)
+            ||(strstr((const char*)gN720Info.CCIDBuf,ICCIDCUCC2) != NULL))
+        {
+            SimType = CUCC;
+            printf("CUCC\r\n");
+        }
+        else if((strstr((const char*)gN720Info.CCIDBuf,ICCIDCTCC) != NULL)
+            ||(strstr((const char*)gN720Info.CCIDBuf,ICCIDCTCC1) != NULL))
+        {
+            SimType = CTCC;
+            printf("CTCC\r\n");
+        }
+
 		gN720InitStep = N720SendATCPIN;		
         N720TCPInitCount = 0;
 		g_N720InitRecvFlag.bits.bN720RecvATCCIDInfoFlag = 0;
@@ -233,9 +274,29 @@ void UartDeal_task(void)
 			printf("%c",gN720Info.TCPSETUP[i]);
 		}
 		printf("\r\n");
-		gN720TCPInitStep = N720SendTCPACK;
+
+        /*判断返回值是否为“OK”：
+            如果返回值有“OK”，则进入下一步，发送TCPACK,如果返回"fail"则重新发送TCPSETUP;
+            TCPSETUP发送3次错误后就重启
+        */
+		if(strstr((const char*)gN720Info.TCPSETUP,TCPACKBuf) != NULL)
+		{
+		    gN720TCPInitStep = N720SendTCPACK;
+        }
+        else
+        {
+            TCPSetupCount++;
+            if(TCPSetupCount == 3)
+            {
+                TCPSetupCount = 0;
+                N720PowerkeyReset();
+                return ;
+            }
+    		gN720TCPInitStep = N720SendTCPSETUP;
+            
+        }
         N720TCPInitCount = 0;
-		g_N720TCPInitFlag.bits.bN720RecvATTCPSETUPINGInfoFlag = 0;
+        g_N720TCPInitFlag.bits.bN720RecvATTCPSETUPINGInfoFlag = 0;
 	}    
 
     if(g_N720TCPInitFlag.bits.bN720RecvATTCPACKInfoFlag == 1)
@@ -246,6 +307,7 @@ void UartDeal_task(void)
             printf("%c",gN720Info.TCPACK[i]);
         }
         printf("\r\n");
+
         gN720TCPInitStep = N720WaitRecvData;
         N720TCPInitCount = 0;
         g_N720TCPInitFlag.bits.bN720RecvATTCPACKInfoFlag = 0;
@@ -286,11 +348,21 @@ void UartDeal_task(void)
     {
         g_N720InitRecvFlag.bits.bN720RecvCANDataFlag = 0;
     #if 1
-        printf("recv data\r\n");
+        printf("recv data:\r\n");
+        #if 0
         for(i = 0;i < sizeof(gN720Info.TCPRecvCANData);i++)
         {
-            printf("%c",gN720Info.TCPRecvCANData[i]);
+            //printf("%c",gN720Info.TCPRecvCANData[i]);
+            printf("%c",gTCPRecvCANData[i]);
         }
+        #else
+        for(i = 0;i < sizeof(gTCPRecvCANData);i++)
+        {
+            //printf("%c",gN720Info.TCPRecvCANData[i]);
+            printf("%c",gTCPRecvCANData[i]);
+        }
+
+        #endif
         printf("\r\n");
     #endif
     }

@@ -90,10 +90,10 @@ u8 CanModeInit(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 	CAN_FilterInitStructure.CAN_FilterNumber = 0;	  //过滤器0
    	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;//CAN_FilterMode_IdMask; 
   	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
-  	CAN_FilterInitStructure.CAN_FilterIdHigh = (((u32)CANID_BMS_1 << 3) >> 16) & 0xFFFF;
-  	CAN_FilterInitStructure.CAN_FilterIdLow = (((u32)CANID_BMS_1 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;
-  	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (((u32)CANID_BMS_7 << 3) >> 16) & 0xFFFF;
-  	CAN_FilterInitStructure.CAN_FilterMaskIdLow = (((u32)CANID_BMS_7 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;;
+  	CAN_FilterInitStructure.CAN_FilterIdHigh = (((u32)CANID_VCU_1 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterIdLow = (((u32)CANID_VCU_1 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (((u32)CANID_VCU_2 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdLow = (((u32)CANID_VCU_2 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;;
   	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_Filter_FIFO0;//过滤器0关联到FIFO0
 	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE; //激活过滤器0
   	CAN_FilterInit(&CAN_FilterInitStructure);//滤波器初始化
@@ -104,12 +104,80 @@ u8 CanModeInit(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
   	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
   	CAN_FilterInitStructure.CAN_FilterIdHigh = (((u32)CANID_VCU_5 << 3) >> 16) & 0xFFFF;
   	CAN_FilterInitStructure.CAN_FilterIdLow = (((u32)CANID_VCU_5 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (((u32)CANID_VCU_3 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdLow = (((u32)CANID_VCU_3 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;;
+  	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_Filter_FIFO0;//过滤器1关联到FIFO0
+	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE; //激活过滤器1
+  	CAN_FilterInit(&CAN_FilterInitStructure);//滤波器初始化
+
+	CAN_FilterInitStructure.CAN_FilterNumber = 2;	  //过滤器2
+   	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;//CAN_FilterMode_IdMask; 
+  	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
+  	CAN_FilterInitStructure.CAN_FilterIdHigh = (((u32)CANID_BCM_1 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterIdLow = (((u32)CANID_BCM_1 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (((u32)CANID_BCM_2 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdLow = (((u32)CANID_BCM_2 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;;
+  	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_Filter_FIFO0;//过滤器1关联到FIFO0
+	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE; //激活过滤器1
+  	CAN_FilterInit(&CAN_FilterInitStructure);//滤波器初始化
+
+    
+	CAN_FilterInitStructure.CAN_FilterNumber = 3;	  //过滤器3
+   	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;//CAN_FilterMode_IdMask; 
+  	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
+  	CAN_FilterInitStructure.CAN_FilterIdHigh = (((u32)CANID_BCM_3 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterIdLow = (((u32)CANID_BCM_3 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;
   	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (((u32)CANID_EBS_1 << 3) >> 16) & 0xFFFF;
   	CAN_FilterInitStructure.CAN_FilterMaskIdLow = (((u32)CANID_EBS_1 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;;
   	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_Filter_FIFO0;//过滤器1关联到FIFO0
 	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE; //激活过滤器1
   	CAN_FilterInit(&CAN_FilterInitStructure);//滤波器初始化
-	
+
+    
+	CAN_FilterInitStructure.CAN_FilterNumber = 4;	  //过滤器4
+   	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;//CAN_FilterMode_IdMask; 
+  	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
+  	CAN_FilterInitStructure.CAN_FilterIdHigh = (((u32)CANID_BMS_1 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterIdLow = (((u32)CANID_BMS_1 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (((u32)CANID_BMS_2 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdLow = (((u32)CANID_BMS_2 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;;
+  	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_Filter_FIFO0;//过滤器1关联到FIFO0
+	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE; //激活过滤器1
+  	CAN_FilterInit(&CAN_FilterInitStructure);//滤波器初始化
+
+	CAN_FilterInitStructure.CAN_FilterNumber = 5;	  //过滤器4
+   	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;//CAN_FilterMode_IdMask; 
+  	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
+  	CAN_FilterInitStructure.CAN_FilterIdHigh = (((u32)CANID_BMS_3 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterIdLow = (((u32)CANID_BMS_3 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (((u32)CANID_BMS_4 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdLow = (((u32)CANID_BMS_4 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;;
+  	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_Filter_FIFO0;//过滤器1关联到FIFO0
+	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE; //激活过滤器1
+  	CAN_FilterInit(&CAN_FilterInitStructure);//滤波器初始化
+
+	CAN_FilterInitStructure.CAN_FilterNumber = 6;	  //过滤器4
+   	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;//CAN_FilterMode_IdMask; 
+  	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
+  	CAN_FilterInitStructure.CAN_FilterIdHigh = (((u32)CANID_BMS_5 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterIdLow = (((u32)CANID_BMS_5 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (((u32)CANID_BMS_6 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdLow = (((u32)CANID_BMS_6 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;;
+  	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_Filter_FIFO0;//过滤器1关联到FIFO0
+	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE; //激活过滤器1
+  	CAN_FilterInit(&CAN_FilterInitStructure);//滤波器初始化
+
+    
+	CAN_FilterInitStructure.CAN_FilterNumber = 7;	  //过滤器4
+   	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdList;//CAN_FilterMode_IdMask; 
+  	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
+  	CAN_FilterInitStructure.CAN_FilterIdHigh = (((u32)CANID_BMS_7 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterIdLow = (((u32)CANID_BMS_7 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (((u32)CANID_BMS_8 << 3) >> 16) & 0xFFFF;
+  	CAN_FilterInitStructure.CAN_FilterMaskIdLow = (((u32)CANID_BMS_8 << 3) & 0xFFFF) | CAN_Id_Extended | CAN_RTR_Data;;
+  	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_Filter_FIFO0;//过滤器1关联到FIFO0
+	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE; //激活过滤器1
+  	CAN_FilterInit(&CAN_FilterInitStructure);//滤波器初始化
 #if CAN_RX0_INT_ENABLE
 
 	CAN_ITConfig(CAN1,CAN_IT_FMP0,ENABLE);//FIFO0消息挂号中断允许.	
@@ -144,18 +212,123 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
   	CAN_Receive(CAN1, 0, &RxMessage);
 
     
-	if(RxMessage.ExtId == CANID_BMS_1)
+	if(RxMessage.ExtId == CANID_VCU_1)
 	{
 		memcpy(gCanRxRawDataBuf[CAN_INDEX0].Buf,&RxMessage,sizeof(RxMessage));		
 		gCanRxRawDataBuf[CAN_INDEX0].NewDataFlag = 1;
 
     }
 
-    
-	if(RxMessage.ExtId == CANID_BMS_7)
+	if(RxMessage.ExtId == CANID_VCU_2)
 	{
 		memcpy(gCanRxRawDataBuf[CAN_INDEX1].Buf,&RxMessage,sizeof(RxMessage));		
 		gCanRxRawDataBuf[CAN_INDEX1].NewDataFlag = 1;
+    }
+
+    
+	if(RxMessage.ExtId == CANID_VCU_3)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX2].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX2].NewDataFlag = 1;
+
+    }
+
+	if(RxMessage.ExtId == CANID_VCU_5)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX3].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX3].NewDataFlag = 1;
+    }
+
+    
+	if(RxMessage.ExtId == CANID_BCM_1)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX4].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX4].NewDataFlag = 1;
+
+    }
+
+	if(RxMessage.ExtId == CANID_BCM_2)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX5].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX5].NewDataFlag = 1;
+    }
+
+    
+	if(RxMessage.ExtId == CANID_BCM_3)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX6].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX6].NewDataFlag = 1;
+
+    }
+
+	if(RxMessage.ExtId == CANID_EBS_1)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX7].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX7].NewDataFlag = 1;
+
+    }
+
+    
+	if(RxMessage.ExtId == CANID_BMS_1)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX8].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX8].NewDataFlag = 1;
+
+    }
+
+    
+	if(RxMessage.ExtId == CANID_BMS_2)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX9].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX9].NewDataFlag = 1;
+
+    }
+    
+	if(RxMessage.ExtId == CANID_BMS_3)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX10].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX10].NewDataFlag = 1;
+
+    }
+
+    
+	if(RxMessage.ExtId == CANID_BMS_4)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX11].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX11].NewDataFlag = 1;
+
+    }
+
+    
+	if(RxMessage.ExtId == CANID_BMS_5)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX12].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX12].NewDataFlag = 1;
+
+    }
+
+    
+	if(RxMessage.ExtId == CANID_BMS_6)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX13].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX13].NewDataFlag = 1;
+
+    }
+
+    
+	if(RxMessage.ExtId == CANID_BMS_7)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX14].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX14].NewDataFlag = 1;
+
+    }
+
+    
+	if(RxMessage.ExtId == CANID_BMS_8)
+	{
+		memcpy(gCanRxRawDataBuf[CAN_INDEX15].Buf,&RxMessage,sizeof(RxMessage));		
+		gCanRxRawDataBuf[CAN_INDEX15].NewDataFlag = 1;
+
     }
 }
 
