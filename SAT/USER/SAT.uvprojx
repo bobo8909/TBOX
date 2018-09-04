@@ -448,6 +448,11 @@
               <FileType>1</FileType>
               <FilePath>..\APP\UartSendData_task.c</FilePath>
             </File>
+            <File>
+              <FileName>GPS_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\GPS_task.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

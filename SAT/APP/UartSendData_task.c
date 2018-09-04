@@ -15,14 +15,14 @@ u8 DataSendBuf[SEND_DATA_LEN] = {0};
 #if 1
 
 /**********************************
- *函数名：static void SwitchCANData(u8* src ,u8* SendVal,u16 srclen)
+ *函数名：static void SwitchSendData(u8* src ,u8* SendVal,u16 srclen)
  *函数功能：把16进制数转换成ASCII值
  *参数:(1)src:转换后的值存放的地址
         (2)SendVal:准备转换的值
         (3)srclen:需要转换的数据长度
  *返回值:none
 ***********************************/
-static void SwitchCANData(u8* src ,u8* SendVal,u16 srclen)
+void SwitchSendData(u8* src ,u8* SendVal,u16 srclen)
 {
 	u16 i;
 	for(i = 0; i < srclen; i++)
@@ -49,7 +49,7 @@ static void SwitchCANData(u8* src ,u8* SendVal,u16 srclen)
 
 }
 #else
-static void SwitchCANData(u16* src ,u8* SendVal,u16 srclen)
+static void SwitchSendData(u16* src ,u8* SendVal,u16 srclen)
 {
 	u16 i;
 	u8 Tempbuf[40] = {0};
@@ -118,7 +118,7 @@ void ATCommSendCAN(void)
     if(gCanRxRawDataBuf[CanRxCount].NewDataFlag == 1)
     {
 
-		SwitchCANData(DataSendBuf + CANDATA_SEND_LEN * CanRxCount,gCanRxRawDataBuf[CanRxCount].Buf, 
+		SwitchSendData(DataSendBuf + CANDATA_SEND_LEN * CanRxCount,gCanRxRawDataBuf[CanRxCount].Buf, 
 							CANDATA_SEND_LEN);
         
 		gCanRxRawDataBuf[CanRxCount].NewDataFlag = 0;

@@ -44,7 +44,8 @@ typedef union
         u8 bN720SendATTCPSENDCommandFlag : 1;
         u8 bN720SendATXGAUTHCommandFlag : 1;
         u8 bN720SendATPrepareSendCommandFlag : 1;
-        u8 bNull : 7;
+        u8 bN720SendATDataNoResponseFlag : 1;   //发送"tcpsend"指令后如果收不到"tcpsend ok"的回复
+        u8 bNull : 6;
 	}bits;
 }STRUCT_N720TCPInitTIMFlag;
 extern STRUCT_N720TCPInitTIMFlag g_N720TCPInitTIMFlag;

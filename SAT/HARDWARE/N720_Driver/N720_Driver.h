@@ -59,7 +59,8 @@ typedef union
 		u8 bN720PowerONFlag : 1;
 		u8 bN720PowerOFFFlag : 1;        
         u8 bN720PowerkeyResetFlag : 1;
-        u8 bNull : 4;
+        u8 bN720SendATCSQPrintFlag : 1;
+        u8 bNull : 3;
 	}bits;
 }STRUCT_N720InitTIMFlag;
 extern STRUCT_N720InitTIMFlag g_N720InitTIMFlag;

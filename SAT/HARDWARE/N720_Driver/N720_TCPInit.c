@@ -7,13 +7,13 @@ static u8 *TCPInitCommandBuf[] =
     "AT+XIIC?\r",
     "AT+TCPCLOSE=1\r",
     "AT+TCPSETUP=1,139.196.56.130,30102\r",
-    //"AT+TCPSETUP=1,119.23.211.206,8080\r",
+//    "AT+TCPSETUP=1,119.23.211.206,8080\r",
     "AT+TCPACK=1\r",
-    "AT+TCPSEND=1,640\r",
+    "AT+TCPSEND=1,750\r",
     "AT+XGAUTH=1,1,\"gsm\",\"1234\"\r",//移动卡号和密码
     "AT+CGDCONT=1,\"IP\",\"UNINET\"\r",//联通APN
     "AT+CGDCONT=1,\"IP\",\"ctm2c\"\r",//电信APN
-    "AT+XGAUTH=1,1,\"m2m\",\"vnet.mobi\"\r"//电信，联通卡号和密码
+    "AT+XGAUTH=1,1,\"card\",\"card\"\r"//电信，联通卡号和密码
 };
 //static u8 SendData[5][40] = {"1234567890123456789012345678901234567890",
 //                                "1111111111111111111111111111111111111111",
@@ -270,6 +270,8 @@ void N720_TCPInit(void)
         
         USART2_Send_String(TCPInitCommandBuf[COMMAND_ATTCPSEND]);
         g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 1;
+        
+        g_N720TCPInitTIMFlag.bits.bN720SendATDataNoResponseFlag = 1;
     }
     #endif
     #if 0

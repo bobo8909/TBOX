@@ -22,8 +22,9 @@ int GetKey (void)  {
  
 	  
 UARTData gUARTData[USART_REC_BUF] = {{0},0};	  
-  
-u8 gTCPRecvCANData[647] = {0};
+
+
+u8 gTCPRecvCANData[757] = {0};
 void uart2_init(u32 bound)
 {
   //GPIO端口设置
@@ -66,8 +67,6 @@ void uart2_init(u32 bound)
 
 }
 
-/*N720 AT指令接收*/
-#define ATCMDSIZEOF(A) (sizeof(A)/sizeof(A[0]))
 
 STRUCT_InitRECVFlag g_N720InitRecvFlag = {0};
 STRUCT_TCPInitFlag g_N720TCPInitFlag = {0};
@@ -109,6 +108,7 @@ static u8 ATRecvStatusHeadCount = 0;
 //static u8 ATRecvStatusTailCount = 0;
 u8 const ATRecvStatusBuf[] = {"+TCPSEND: 1,OPERATION EXPIRED"};
 u8 const ATRecvStatusBuf1[] = {"+TCPSEND: 1,FAIL"};
+u8 const ATRecvStatusBuf2[] = {"+TCPSEND: SOCKET ID OPEN FAILED"};
 void N720InitRecvData(u8 Res)
 {
 	/*4G模块初始化,接收到发送AT命令后的回复*/
@@ -743,63 +743,6 @@ void N720TCPInitRecvData(u8 Res)
             case N720SendTCPCLOSE:
                 
                 g_N720TCPInitFlag.bits.bN720RecvATTCPCLOSEInfoFlag = 1;
-        #if 0
-                switch(ATRecvStep)
-                {
-                    case 0:
-                        if(ATCMDTCPCLOSEHeadBuf[ATCMDHeadCount] == Res)
-                        {
-                            if(ATCMDHeadCount == (ATCMDSIZEOF(ATCMDTCPCLOSEHeadBuf)-2))
-                            {
-                                ATCMDHeadCount = 0;
-                                ATRecvStep = 1;
-                            }
-                            else
-                            {
-                                ATCMDHeadCount++;
-                            }
-                        }
-                        else
-                        {
-                            ATCMDHeadCount = 0;
-                        }
-                        break;
-                    case 1:
-                        if(ATCMDTailBuf[ATCMDTailCount] == Res)
-                        {
-                            ATRecvStep = 2;
-                        }
-                        else
-                        {
-                            gN720Info.TCPCLOSE[ATDataCount++] = Res;
-                        }
-                        
-                        break;
-                    case 2:
-                        
-                        if(ATCMDTailBuf[++ATCMDTailCount] == Res)
-                        {
-                            if(ATCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
-                            {
-                                g_N720TCPInitFlag.bits.bN720RecvATTCPCLOSEInfoFlag = 1;
-                                ATRecvStep = 0;
-                                ATCMDTailCount = 0;
-                                ATCMDHeadCount = 0;
-                                ATDataCount = 0;
-                            }
-                        }
-                        else
-                        {
-                            ATRecvStep = 0;
-                            ATCMDTailCount = 0;
-                            ATCMDHeadCount = 0;
-                            ATDataCount = 0;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            #endif
                 break;
             case N720SendTCPSETUPING:
                 switch(ATRecvStep)
@@ -1057,10 +1000,13 @@ void N720RecvCANData(u8 Res)
 
 void N720RecvStatus(u8 Res)
 {
-    if((ATRecvStatusBuf[ATRecvStatusHeadCount] == Res)||(ATRecvStatusBuf1[ATRecvStatusHeadCount] == Res))
+    if((ATRecvStatusBuf[ATRecvStatusHeadCount] == Res)
+        ||(ATRecvStatusBuf1[ATRecvStatusHeadCount] == Res)
+        ||(ATRecvStatusBuf2[ATRecvStatusHeadCount] == Res))
     {
         if((ATRecvStatusHeadCount == (ATCMDSIZEOF(ATRecvStatusBuf)-2))
-            ||(ATRecvStatusHeadCount == (ATCMDSIZEOF(ATRecvStatusBuf1)-2)))
+            ||(ATRecvStatusHeadCount == (ATCMDSIZEOF(ATRecvStatusBuf1)-2))
+            ||(ATRecvStatusHeadCount == (ATCMDSIZEOF(ATRecvStatusBuf2)-2)))
         {
             ATRecvStatusHeadCount = 0;
             printf("zzz\r\n");
@@ -1082,16 +1028,87 @@ void N720RecvStatus(u8 Res)
     }       
 }
 
+static u8 CSQRecvStep = 0;
+static u8 CSQCMDHeadCount = 0;
+static u8 CSQCMDTailCount = 0;
+static u8 CSQDataCount = 0;
+void GetCSQ(u8 Res)
+{
+    switch(CSQRecvStep)
+    {
+        case 0:
+            if(ATCMDATCSQHeadBuf[CSQCMDHeadCount] == Res)
+            {
+                if(CSQCMDHeadCount == (ATCMDSIZEOF(ATCMDATCSQHeadBuf)-2))
+                {
+                    CSQCMDHeadCount = 0;
+                    CSQRecvStep = 1;
+                }
+                else
+                {
+                    CSQCMDHeadCount++;
+                }
+            }
+            else
+            {
+                CSQCMDHeadCount = 0;
+            }
+            break;
+        case 1:
+            if(ATCMDTailBuf[CSQCMDTailCount] == Res)
+            {
+                CSQRecvStep = 2;
+            }
+            else
+            {
+                gN720Info.CSQBuf[CSQDataCount++] = Res;
+            }
+            
+            break;
+        case 2:
+            if(ATCMDTailBuf[++CSQCMDTailCount] == Res)
+            {
+                if(CSQCMDTailCount == (ATCMDSIZEOF(ATCMDTailBuf)-2))
+                {
+                    g_N720InitRecvFlag.bits.bN720RecvATCSQInfoFlag = 1;
+                    CSQRecvStep = 0;
+                    CSQCMDTailCount = 0;
+                    CSQCMDHeadCount = 0;
+                    CSQDataCount = 0;
+                }
+            }
+            else
+            {
+                CSQRecvStep = 0;
+                CSQCMDTailCount = 0;
+                CSQCMDHeadCount = 0;
+                CSQDataCount = 0;
+                //printf("44\r\n");
+            }
+            break;
+        default:
+            break;
+    }
+}
+
 void USART2_IRQHandler(void)                	//串口1中断服务程序
 {
     u8 Res;
     if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
     {
     	Res = USART_ReceiveData(USART2);	//读取接收到的数据
-        N720RecvCANData(Res);
+    	if(g_N720InitRecvFlag.bits.bN720RecvCANDataFlag == 0)
+        {
+            N720RecvCANData(Res);
+        }
         N720InitRecvData(Res);
         N720TCPInitRecvData(Res);
         N720RecvStatus(Res);
+        N720RecvGPSData(Res);
+        if(g_N720TCPInitFlag.bits.bN720SendACKFinishFlag == 1)
+        {
+            GetCSQ(Res);
+        }
     }
 } 
 

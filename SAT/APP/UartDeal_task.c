@@ -15,8 +15,9 @@ const char ICCIDCUCC2[] = {"898609"};//联通
 const char ICCIDCTCC[] = {"898603"};//电信
 const char ICCIDCTCC1[] = {"898611"};//电信
 
+static u16 DataResendCount = 0;
 
-
+static u8 printfRecvData[757] = {0};
 SIMCARDTYPE SimType = CMCC;
 
 /**********************************
@@ -136,11 +137,15 @@ void UartDeal_task(void)
         memcpy(N720CSQY, gN720Info.CSQBuf + 4, 2);
         N720CSQYValue = atoi(N720CSQY);
         memset(gN720Info.CSQBuf,0,sizeof(gN720Info.CSQBuf)/sizeof(gN720Info.CSQBuf[0]));
-        if((N720CSQXValue <= 31) && (N720CSQXValue >= 12))
+        printf("sizeof:%d\r\n",sizeof(gN720Info.CSQBuf)/sizeof(gN720Info.CSQBuf[0]));
+        if( g_N720TCPInitFlag.bits.bN720SendACKFinishFlag == 0)
         {
-            gN720InitStep = N720SendATCREG;
-            CMDFailedCount = 0;
-            N720TCPInitCount = 0;
+            if((N720CSQXValue <= 31) && (N720CSQXValue >= 12))
+            {
+                gN720InitStep = N720SendATCREG;
+                CMDFailedCount = 0;
+                N720TCPInitCount = 0;
+            }
         }
 		g_N720InitRecvFlag.bits.bN720RecvATCSQInfoFlag = 0;
 	}
@@ -312,6 +317,8 @@ void UartDeal_task(void)
         N720TCPInitCount = 0;
         g_N720TCPInitFlag.bits.bN720RecvATTCPACKInfoFlag = 0;
         g_N720TCPInitFlag.bits.bN720SendACKFinishFlag = 1;
+        
+        g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 0;
     }
 
     if(g_N720TCPInitFlag.bits.bN720RecvATTCPSENDInfoFlag == 1)
@@ -336,6 +343,10 @@ void UartDeal_task(void)
         #endif
         printf("\r\n");
         g_N720TCPInitFlag.bits.bN720SendATSendDataSuccessCommandFlag = 0;
+
+        
+        g_N720TCPInitTIMFlag.bits.bN720SendATDataNoResponseFlag = 0;
+        DataResendCount = 0;
         
         //gN720TCPInitStep = N720SendTCPSEND;
         g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 0;
@@ -346,6 +357,8 @@ void UartDeal_task(void)
 #if 1
     if( g_N720InitRecvFlag.bits.bN720RecvCANDataFlag == 1)
     {
+        memcpy(printfRecvData,gTCPRecvCANData,sizeof(gTCPRecvCANData));
+        memset(gTCPRecvCANData,0,sizeof(gTCPRecvCANData));
         g_N720InitRecvFlag.bits.bN720RecvCANDataFlag = 0;
     #if 1
         printf("recv data:\r\n");
@@ -356,10 +369,10 @@ void UartDeal_task(void)
             printf("%c",gTCPRecvCANData[i]);
         }
         #else
-        for(i = 0;i < sizeof(gTCPRecvCANData);i++)
+        for(i = 0;i < sizeof(printfRecvData);i++)
         {
             //printf("%c",gN720Info.TCPRecvCANData[i]);
-            printf("%c",gTCPRecvCANData[i]);
+            printf("%c",printfRecvData[i]);
         }
 
         #endif
@@ -367,4 +380,23 @@ void UartDeal_task(void)
     #endif
     }
 #endif
+}
+
+void SendDataNoResponseTimerHandler(void)
+{
+    if(g_N720TCPInitTIMFlag.bits.bN720SendATDataNoResponseFlag == 1)
+    {
+        DataResendCount++;
+        if(DataResendCount == 10000)
+        {
+            printf("xxx\r\n");
+            DataResendCount = 0;
+            g_N720TCPInitTIMFlag.bits.bN720SendATDataNoResponseFlag = 0;
+//            g_N720TCPInitTIMFlag.bits.bN720SendATTCPSENDCommandFlag = 0;
+            g_N720TCPInitTIMFlag.bits.bN720SendATTCPCLOSECommandFlag = 0;
+            g_N720TCPInitFlag.bits.bN720SendACKFinishFlag = 0;
+            
+            gN720TCPInitStep = N720SendTCPCLOSE;
+        }
+    }
 }

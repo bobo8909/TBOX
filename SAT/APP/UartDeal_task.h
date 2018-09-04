@@ -10,6 +10,6 @@ typedef enum
 extern SIMCARDTYPE SimType;
 
 void UartDeal_task(void);
-
+void SendDataNoResponseTimerHandler(void);
 #endif
 

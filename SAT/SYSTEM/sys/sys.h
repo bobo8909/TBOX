@@ -22,6 +22,7 @@
 #include "N720_Driver.h"
 #include "N720_TCPInit.h"
 
+#include "GPS_task.h"
 #include "CANsend_task.h"
 #include "CANrecv_task.h"
 #include "IO_task.h"

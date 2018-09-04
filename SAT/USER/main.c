@@ -14,8 +14,10 @@ int main(void)
 		N720Init();
     
 		N720_TCPInit();
+        
+        GPS_task();
 
-    Led_task();
+        Led_task();
 		
 		UartDeal_task();
     #endif

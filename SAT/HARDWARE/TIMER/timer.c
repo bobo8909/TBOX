@@ -40,14 +40,17 @@ static void TIM6_Init(u16 arr,u16 psc)
 
 static u16 DataSendCount = 0;
 u8 DataSendFlag = 0;
-void TIM6_IRQHandler(void)	 //TIM2中断
+u16 printCSQCount = 0;
+
+void TIM6_IRQHandler(void)   //TIM2中断
 {
 
 	if (TIM_GetITStatus(TIM6, TIM_IT_Update) != RESET)	//检查TIM2更新中断发生与否
 	{
 		TIM_ClearITPendingBit(TIM6, TIM_IT_Update  );  //清除TIMx更新中断标志
-
-        if(g_N720TCPInitFlag.bits.bN720SendACKFinishFlag == 1)
+    #if 1
+        if((g_N720TCPInitFlag.bits.bN720SendACKFinishFlag == 1)
+        &&(g_N720GPSFalg.bits.bN720GPSOpenSuccessFlag == 1))
         {
             DataSendCount++;
     		if(DataSendCount == DATA_SEND_DELAY)
@@ -60,6 +63,19 @@ void TIM6_IRQHandler(void)	 //TIM2中断
         {
             DataSendCount = 0;
         }
+        
+        SendDataNoResponseTimerHandler();
+        
+        if (g_N720TCPInitFlag.bits.bN720SendACKFinishFlag == 1)
+        {
+            printCSQCount++;
+            if(printCSQCount == 2000)
+            {
+                printCSQCount = 0;
+                g_N720InitTIMFlag.bits.bN720SendATCSQPrintFlag = 1;
+            }
+        }
+        #endif
 		/*can count*/
         CANSendTimerHandler();
 		/*LED count*/
@@ -70,6 +86,7 @@ void TIM6_IRQHandler(void)	 //TIM2中断
         N720TCPInitTimerHandler();
 
         N720PowerTimerHandler();
+        GPS_TimerHandler();
 
 	}
 }

@@ -2,6 +2,8 @@
 #define __USART2_H
 #include "sys.h" 
 
+/*N720 AT指令接收*/
+#define ATCMDSIZEOF(A) (sizeof(A)/sizeof(A[0]))
 
 #define USART_REC_LEN  			200  	//定义最大接收字节数 200
 #define USART_REC_BUF			64	  	
@@ -70,11 +72,13 @@ typedef struct
     u8 TCPCGDCONT[20];
     u8 TCPACK[15];
     u8 TCPFinish[10];
+    u8 GPSStatus[10];
     //u8 TCPRecvCANData[46];//链路编号(2byte)+','(1byte)+接收的数据长度40(2byte)+','(1byte)+数据(40byte) = 46
 }STRUCT_N720_INFO;
 extern STRUCT_N720_INFO gN720Info;
 
-extern u8 gTCPRecvCANData[647];
+
+extern u8 gTCPRecvCANData[757];
 extern UARTData gUARTData[USART_REC_BUF]; 
 extern u16 USART_RX_STA;         		//接收状态标记	
 //如果想串口中断接收，请不要注释以下宏定义

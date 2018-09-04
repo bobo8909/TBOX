@@ -17,7 +17,7 @@ static u8  *ATCommandBuf[] =
 
 
 STRUCT_N720InitTIMFlag g_N720InitTIMFlag = {0};
-
+u8 printCSQFlag = 0;
 /**********************************
 *函数名：void N720PowerON(void)
 *函数功能：N720模块开机
@@ -43,6 +43,7 @@ void N720PowerOFF(void)
     N720POWERKEY = N720_ON;
     gN720InitStep = 0xFF;
     gN720TCPInitStep = 0;
+    GPSInitStep = 0;
     g_N720TCPInitFlag.Byte = 0x00;
     g_N720InitTIMFlag.Byte = 0x00;
     g_N720TCPInitTIMFlag.Byte = 0x00;
@@ -344,5 +345,15 @@ void N720Init(void)
 		g_N720InitTIMFlag.bits.bN720SendATMYSYSINFOCommandFlag = 0;
 	}
 	#endif
+
+    
+	if(g_N720InitTIMFlag.bits.bN720SendATCSQPrintFlag == 1)
+	{
+        printf("ATCSQ\r\n");
+		USART2_Send_String(ATCommandBuf[COMMAND_ATCSQ]);
+		g_N720InitTIMFlag.bits.bN720SendATCSQPrintFlag = 0;
+        printf("gN720InitStep:%x   ",gN720InitStep);
+        printf("gN720TCPInitStep:%x\r\n",gN720TCPInitStep);
+	}
 }
 
