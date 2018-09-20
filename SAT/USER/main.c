@@ -28,7 +28,7 @@ int main(void)
 		CANrecv_task();
 
 		/*CAN·¢ËÍÊı¾İ*/
-		CANsend_task();
+		//CANsend_task();
 #endif
     }
 }

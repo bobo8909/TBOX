@@ -15,23 +15,23 @@ u8 DataSendBuf[SEND_DATA_LEN] = {0};
 #if 1
 
 /**********************************
- *函数名：static void SwitchSendData(u8* src ,u8* SendVal,u16 srclen)
+ *函数名：static void SwitchSendData(u8* src ,u8* SendVal,u16 SendValLen)
  *函数功能：把16进制数转换成ASCII值
  *参数:(1)src:转换后的值存放的地址
         (2)SendVal:准备转换的值
-        (3)srclen:需要转换的数据长度
+        (3)SendValLen:需要转换的数据长度
  *返回值:none
 ***********************************/
-void SwitchSendData(u8* src ,u8* SendVal,u16 srclen)
+void SwitchSendData(u8* src ,u8* SendVal,u16 SendValLen)
 {
 	u16 i;
-	for(i = 0; i < srclen; i++)
+	for(i = 0; i < SendValLen; i++)
 	{
 		src[2*i] = SendVal[i] >> 4;
 		src[2*i+1] = SendVal[i] & 0xf;
 	}
 	
-	for(i = 0; i< srclen * 2; i++)
+	for(i = 0; i< SendValLen * 2; i++)
 	{
 		if (src[i] <= 0x09)
 		{
@@ -114,12 +114,15 @@ static void SwitchSendData(u16* src ,u8* SendVal,u16 srclen)
 void ATCommSendCAN(void)
 {
 	static u8 CanRxCount = 0;
-
+    u16 i = 0;
     if(gCanRxRawDataBuf[CanRxCount].NewDataFlag == 1)
     {
+        
 
 		SwitchSendData(DataSendBuf + CANDATA_SEND_LEN * CanRxCount,gCanRxRawDataBuf[CanRxCount].Buf, 
-							CANDATA_SEND_LEN);
+							CANDATA_BUF_LEN);
+        
+        
         
 		gCanRxRawDataBuf[CanRxCount].NewDataFlag = 0;
 	}
@@ -138,7 +141,7 @@ void ATCommSendCAN(void)
 ***********************************/
 void UartSendData_task(void)
 {
-//	u16 i = 0,j = 0;
+	u16 i = 0,j = 0;
 //    static u8 UartSendDataCount = 0;
 	//if(g_TIMFlag.bits.ATUartSendFlag == 1)
 	{
@@ -155,7 +158,18 @@ void UartSendData_task(void)
     if(g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag == 1)
     {
         g_N720TCPInitFlag.bits.bN720SendATStartSendCommandFlag = 0;
+#if 0
+        printf("datasend:");
+        for(i = 0;i<SEND_DATA_LEN;i++)
+        {
+            printf("%02x ",DataSendBuf[i]);
+        }
+        printf("\r\n");
+#endif        
         USART2_Send_CANData(DataSendBuf);
+
+        memset(DataSendBuf, 0, sizeof(DataSendBuf)/sizeof(DataSendBuf[0]));
+        
         gN720TCPInitStep = N720TCPInitFinish;
     }
     

@@ -7,7 +7,7 @@ static u8 *TCPInitCommandBuf[] =
     "AT+XIIC?\r",
     "AT+TCPCLOSE=1\r",
     "AT+TCPSETUP=1,139.196.56.130,30102\r",
-//    "AT+TCPSETUP=1,119.23.211.206,8080\r",
+//    "AT+TCPSETUP=1,119.23.211.206,8000\r",
     "AT+TCPACK=1\r",
     "AT+TCPSEND=1,750\r",
     "AT+XGAUTH=1,1,\"gsm\",\"1234\"\r",//“∆∂Øø®∫≈∫Õ√‹¬Î

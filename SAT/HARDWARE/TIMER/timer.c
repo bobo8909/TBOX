@@ -77,7 +77,7 @@ void TIM6_IRQHandler(void)   //TIM2ÖÐ¶Ï
         }
         #endif
 		/*can count*/
-        CANSendTimerHandler();
+//        CANSendTimerHandler();
 		/*LED count*/
         LedTimerHandler();
 

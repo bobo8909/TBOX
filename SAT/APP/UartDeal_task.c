@@ -137,7 +137,7 @@ void UartDeal_task(void)
         memcpy(N720CSQY, gN720Info.CSQBuf + 4, 2);
         N720CSQYValue = atoi(N720CSQY);
         memset(gN720Info.CSQBuf,0,sizeof(gN720Info.CSQBuf)/sizeof(gN720Info.CSQBuf[0]));
-        printf("sizeof:%d\r\n",sizeof(gN720Info.CSQBuf)/sizeof(gN720Info.CSQBuf[0]));
+//        printf("sizeof:%d\r\n",sizeof(gN720Info.CSQBuf)/sizeof(gN720Info.CSQBuf[0]));
         if( g_N720TCPInitFlag.bits.bN720SendACKFinishFlag == 0)
         {
             if((N720CSQXValue <= 31) && (N720CSQXValue >= 12))
